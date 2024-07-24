@@ -50,50 +50,6 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
         </li>
         <li>
           <NavLink
-            to="/supplier"
-            className="text-dark rounded py-2 w-100 d-inline-block px-3"
-            exact
-            activeClassName="active"
-          >
-            <FaIcons.FaTruckMoving className="icon" />{" "}
-            <span className="text">Proveedores</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/products"
-            className="text-dark rounded py-2 w-100 d-inline-block px-3"
-            exact
-            activeClassName="active"
-          >
-            <FaIcons.FaBarcode className="icon" />{" "}
-            <span className="text">Productos</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/quotation"
-            className="text-dark rounded py-2 w-100 d-inline-block px-3"
-            exact
-            activeClassName="active"
-          >
-            <FaIcons.FaBalanceScaleLeft className="icon" />{" "}
-            <span className="text">Cotizaciones</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/purchaseorder"
-            className="text-dark rounded py-2 w-100 d-inline-block px-3"
-            exact
-            activeClassName="active"
-          >
-            <FaIcons.FaClipboardList className="icon" />{" "}
-            <span className="text">Órdenes de compras</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to="/home-foundation"
             className="text-dark rounded py-2 w-100 d-inline-block px-3"
             exact
@@ -112,6 +68,17 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
           >
             <FaIcons.FaClipboardList className="icon" />{" "}
             <span className="text">Lista de Productos</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/foundations-client"
+            className="text-dark rounded py-2 w-100 d-inline-block px-3"
+            exact
+            activeClassName="active"
+          >
+            <FaIcons.FaClipboardList className="icon" />{" "}
+            <span className="text">Fundaciones cliente</span>
           </NavLink>
         </li>
       </ul>
