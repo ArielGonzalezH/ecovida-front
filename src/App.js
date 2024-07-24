@@ -1,6 +1,12 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import './App.scss';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import { useState, useEffect } from "react";
+import "./App.scss";
 
 import config from "../src/config";
 
@@ -21,7 +27,7 @@ import Sidebar from './components/Sidebar';
 import SidebarFundations from './components/SidebarFundations';
 import ProductCard from './components/ProductCard';
 
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -37,16 +43,32 @@ function App() {
   };
 
   async function isAuth() {
+    const token = Cookies.get("token");
+    console.log("Token:", token);
+    if (!token) {
+      setIsAuthenticated(false);
+      setUserType(null);
+      setAuthChecked(true);
+      return;
+    }
+
     try {
-      const response = await fetch(`${config.apiBaseUrl}/is-verify`, {
+      console.log("Verificando autenticación...");
+      const response = await fetch(`http://localhost/api/users/is-verify`, {
         method: "GET",
-        headers: { token: Cookies.get('token') }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
+      if (!response.ok) {
+        console.log("Error en la respuesta del servidor ", response);
+        throw new Error("Error en la respuesta del servidor");
+      }
+
       const parseRes = await response.json();
+      console.log("Respuesta de verificación:", parseRes);
 
       if (parseRes === true) {
-        const decodedToken = jwtDecode(Cookies.get('token'));
+        const decodedToken = jwtDecode(token);
         const userType = decodedToken.type;
         setIsAuthenticated(true);
         setUserType(userType);
@@ -55,7 +77,12 @@ function App() {
         setUserType(null);
       }
     } catch (error) {
-      console.error(error.message);
+      console.error(
+        "Error en la verificación de autenticación:",
+        error.message
+      );
+      setIsAuthenticated(false);
+      setUserType(null);
     } finally {
       setAuthChecked(true);
     }
@@ -63,7 +90,7 @@ function App() {
 
   useEffect(() => {
     isAuth();
-  }, [Cookies.get('token')]);
+  }, [Cookies.get("token")]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -83,7 +110,7 @@ function App() {
         sidebarVisible={sidebarVisible}
         toggleSidebar={toggleSidebar}
       />
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -98,13 +125,24 @@ function App() {
   );
 }
 
-function AppContent({ isAuthenticated, setAuth, authChecked, handleLogin, sidebarVisible, toggleSidebar }) {
+function AppContent({
+  isAuthenticated,
+  setAuth,
+  authChecked,
+  handleLogin,
+  sidebarVisible,
+  toggleSidebar,
+}) {
   const location = useLocation();
 
   return (
     <div className="flex">
-      {isAuthenticated && <Sidebar isVisible={sidebarVisible} toggleSidebar={toggleSidebar} />}
-      <div className={`content w-100 ${sidebarVisible ? 'expanded' : 'collapsed'}`}>
+      {isAuthenticated && (
+        <Sidebar isVisible={sidebarVisible} toggleSidebar={toggleSidebar} />
+      )}
+      <div
+        className={`content w-100 ${sidebarVisible ? "expanded" : "collapsed"}`}
+      >
         {isAuthenticated && <NavbarNav />}
         <Routes>
           <Route path="/" element={isAuthenticated ? <Home setAuth={setAuth} /> : <Navigate to="/login" replace />} />

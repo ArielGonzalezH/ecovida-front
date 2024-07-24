@@ -14,6 +14,11 @@ const Foundations = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [foundationName, setFoundationName] = useState('');
     const [foundationRuc, setFoundationRuc] = useState('');
+    const [role_id, setRole] = useState(null);
+    const [user_name, setUserName] = useState('');
+    const [user_lastname, setUserLastName] = useState('');
+    const [user_email, setUserEmail] = useState('');
+    const [user_password, setUserPassword] = useState('');
 
     const loadRoles = async () => {
         const token = Cookies.get('token');
@@ -130,6 +135,35 @@ const Foundations = () => {
             loadFoundations(); // Recargar las fundaciones después de crear una nueva
         } catch (error) {
             toast.error('Error al crear la fundación.');
+        }
+    };
+
+    const handleAddUser = async () => {
+        const token = Cookies.get('token');
+        try {
+            const res = await fetch('http://localhost/api/users/usuarios', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    role_id: role_id.role_id,
+                    user_name: user_name,
+                    user_lastname: user_lastname,
+                    user_email: user_email,
+                    user_password: user_password,
+                })
+            });
+
+            if (!res.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+
+            toast.success('Usuario creado exitosamente.');
+            setOpenAddUserModal(false);
+            loadUsers();
+        } catch (error) {
+            toast.error('Error al crear el usuario.');
         }
     };
 
@@ -302,34 +336,44 @@ const Foundations = () => {
                         options={roles}
                         getOptionLabel={(option) => option.role_name}
                         renderInput={(params) => <TextField {...params} label="Rol" />}
+                        onChange={(event, newValue) => setRole(newValue)}
                     />
                     <TextField
                         required
                         sx={{ margin: ".5rem .5rem", width: "80%" }}
                         id="outlined-required"
                         label="Nombre"
+                        value={user_name}
+                        onChange={(e) => setUserName(e.target.value)}
                     />
                     <TextField
                         required
                         sx={{ margin: ".5rem .5rem", width: "80%" }}
                         id="outlined-required"
                         label="Apellido"
+                        value={user_lastname}
+                        onChange={(e) => setUserLastName(e.target.value)}
                     />
                     <TextField
                         required
                         sx={{ margin: ".5rem .5rem", width: "80%" }}
                         id="outlined-required"
                         label="Email"
+                        value={user_email}
+                        onChange={(e) => setUserEmail(e.target.value)}
                     />
                     <TextField
                         required
                         sx={{ margin: ".5rem .5rem", width: "80%" }}
                         id="outlined-required"
                         label="Contraseña"
+                        value={user_password}
+                        onChange={(e) => setUserPassword(e.target.value)}
                     />
                     <Button
                         variant="contained"
                         sx={{ margin: ".5rem .5rem" }}
+                        onClick={handleAddUser}
                     >
                         Crear
                     </Button>

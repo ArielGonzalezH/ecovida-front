@@ -38,7 +38,7 @@ const Login = ({ setAuth }) => {
       const parseRes = await response.json();
 
       if (parseRes.token) {
-        Cookies.set("token", parseRes.token);
+        Cookies.set("token", parseRes.token, { expires: 1 });
         Cookies.set("user", JSON.stringify(parseRes.usuario));
 
         setAuth(true);
