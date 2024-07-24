@@ -30,8 +30,18 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/quotation" className='text-dark rounded py-2 w-100 d-inline-block px-3' exact activeClassName='active'>
-                        <FaIcons.FaBalanceScaleLeft className='icon' /> <span className='text'>Cotizaciones</span>
+                    <NavLink to="/prueba" className='text-dark rounded py-2 w-100 d-inline-block px-3' exact activeClassName='active'>
+                        <FaIcons.FaBalanceScaleLeft className='icon' /> <span className='text'>Prueba</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/home-foundation" className='text-dark rounded py-2 w-100 d-inline-block px-3' exact activeClassName='active'>
+                        <FaIcons.FaBalanceScaleLeft className='icon' /> <span className='text'>Welcome Foundations</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/productlist" className='text-dark rounded py-2 w-100 d-inline-block px-3' exact activeClassName='active'>
+                        <FaIcons.FaBalanceScaleLeft className='icon' /> <span className='text'>Lista de Productos</span>
                     </NavLink>
                 </li>
                 <li>

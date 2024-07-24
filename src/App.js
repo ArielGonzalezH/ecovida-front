@@ -12,9 +12,14 @@ import PurchaseOrder from './pages/PurchaseOrder';
 import Quotation from './pages/Quotation';
 import Supplier from './pages/Supplier';
 import FoundationsList from './pages/FoundationsList';
+import WelcomeView from './pages/WelcomeView';
+import Prueba from './pages/Prueba';
+import ProductList from './pages/ProductList';
 
 import NavbarNav from './components/NavbarNav';
 import Sidebar from './components/Sidebar';
+import SidebarFundations from './components/SidebarFundations';
+import ProductCard from './components/ProductCard';
 
 import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
@@ -105,12 +110,15 @@ function AppContent({ isAuthenticated, setAuth, authChecked, handleLogin, sideba
           <Route path="/" element={isAuthenticated ? <Home setAuth={setAuth} /> : <Navigate to="/login" replace />} />
           <Route path="/login" element={!isAuthenticated ? <Login setAuth={setAuth} /> : <Navigate to={location.state?.from || '/'} replace />} />
           <Route path='/home' element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
+          <Route path='/prueba' element={isAuthenticated ? <Prueba /> : <Navigate to="/" />} />
+          <Route path='/home-foundation' element={isAuthenticated ? <WelcomeView/> : <Navigate to="/" />} />
           <Route path='/products' element={isAuthenticated ? <Products /> : <Navigate to="/" />} />
           <Route path='/purchaseorder' element={isAuthenticated ? <PurchaseOrder /> : <Navigate to="/" />} />
           <Route path='/quotation' element={isAuthenticated ? <Quotation /> : <Navigate to='/' />} />
           <Route path='/newquotation' element={isAuthenticated ? <NewQuotation /> : <Navigate to='/' />} />
           <Route path='/supplier' element={isAuthenticated ? <Supplier /> : <Navigate to='/' />} />
           <Route path='/foundations-list' element={isAuthenticated ? <FoundationsList /> : <Navigate to='/' />} />
+          <Route path='/productlist' element={isAuthenticated ? <ProductList /> : <Navigate to='/' />} />
         </Routes>
       </div>
     </div>
