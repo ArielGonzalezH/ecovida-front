@@ -19,6 +19,7 @@ import Quotation from "./pages/Quotation";
 import Supplier from "./pages/Supplier";
 import UsersList from "./pages/UsersList";
 import FoundationsList from "./pages/FoundationsList";
+import VentasTotales from "./pages/VentasTotales";
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
@@ -209,6 +210,12 @@ function AppContent({
             path="/products-list"
             element={
               isAuthenticated ? <ProductList /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/all-sales"
+            element={
+              isAuthenticated ? <VentasTotales /> : <Navigate to="/" />
             }
           />
         </Routes>
