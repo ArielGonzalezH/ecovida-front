@@ -88,6 +88,19 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
             </NavLink>
           </li>
         )}
+        {role_id == 1 && (
+          <li>
+            <NavLink
+              to="/all-sales"
+              className="text-dark rounded py-2 w-100 d-inline-block px-3"
+              exact
+              activeClassName="active"
+            >
+              <FaIcons.FaClipboardList className="icon" />{" "}
+              <span className="text">Ventas</span>
+            </NavLink>
+          </li>
+        )}
       </ul>
     </div>
   );

@@ -14,7 +14,9 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import UsersList from "./pages/UsersList";
 import FoundationsList from "./pages/FoundationsList";
+import VentasTotales from "./pages/VentasTotales";
 import FoundationsClient from "./pages/FoundationsClient";
+import FoundationsProduct from "./pages/FoundationsProduct";
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
@@ -185,6 +187,18 @@ function AppContent({
             element={
               isAuthenticated ? <FoundationsClient /> : <Navigate to="/" />
             }
+          />
+          <Route
+            path="/products/:foundationId" component={FoundationsProduct}
+            element={
+              isAuthenticated ? <FoundationsProduct /> : <Navigate to="/" />
+            }
+          />
+          <Route
+          path="/all-sales"
+          element={
+            isAuthenticated ? <VentasTotales /> : <Navigate to="/" />
+          }
           />
         </Routes>
       </div>
