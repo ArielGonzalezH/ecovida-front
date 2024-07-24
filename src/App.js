@@ -17,6 +17,7 @@ import Products from "./pages/Products";
 import PurchaseOrder from "./pages/PurchaseOrder";
 import Quotation from "./pages/Quotation";
 import Supplier from "./pages/Supplier";
+import UsersList from "./pages/UsersList";
 import FoundationsList from "./pages/FoundationsList";
 
 import NavbarNav from "./components/NavbarNav";
@@ -188,6 +189,12 @@ function AppContent({
             path="/foundations-list"
             element={
               isAuthenticated ? <FoundationsList /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              isAuthenticated ? <UsersList /> : <Navigate to="/" />
             }
           />
         </Routes>
