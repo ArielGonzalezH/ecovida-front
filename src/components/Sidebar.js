@@ -92,6 +92,28 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
             <span className="text">Órdenes de compras</span>
           </NavLink>
         </li>
+        <li>
+          <NavLink
+            to="/home-foundation"
+            className="text-dark rounded py-2 w-100 d-inline-block px-3"
+            exact
+            activeClassName="active"
+          >
+            <FaIcons.FaClipboardList className="icon" />{" "}
+            <span className="text">Inicio Fundacion</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/products-list"
+            className="text-dark rounded py-2 w-100 d-inline-block px-3"
+            exact
+            activeClassName="active"
+          >
+            <FaIcons.FaClipboardList className="icon" />{" "}
+            <span className="text">Lista de Productos</span>
+          </NavLink>
+        </li>
       </ul>
     </div>
   );

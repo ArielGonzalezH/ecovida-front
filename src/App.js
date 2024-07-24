@@ -10,23 +10,6 @@ import "./App.scss";
 
 import config from "../src/config";
 
-<<<<<<< HEAD
-import Home from './pages/Home';
-import Login from './pages/Login';
-import NewQuotation from './pages/NewQuotation';
-import Products from './pages/Products';
-import PurchaseOrder from './pages/PurchaseOrder';
-import Quotation from './pages/Quotation';
-import Supplier from './pages/Supplier';
-import FoundationsList from './pages/FoundationsList';
-import WelcomeView from './pages/WelcomeView';
-import Prueba from './pages/Prueba';
-import ProductList from './pages/ProductList';
-
-import NavbarNav from './components/NavbarNav';
-import Sidebar from './components/Sidebar';
-import SidebarFundations from './components/SidebarFundations';
-=======
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import NewQuotation from "./pages/NewQuotation";
@@ -39,12 +22,13 @@ import FoundationsList from "./pages/FoundationsList";
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
->>>>>>> 35d90c3495111096716bf3208ac193924851fff4
 
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import WelcomeView from "./pages/WelcomeView";
+import ProductList from "./pages/ProductList";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -213,6 +197,18 @@ function AppContent({
             path="/users"
             element={
               isAuthenticated ? <UsersList /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/home-foundation"
+            element={
+              isAuthenticated ? <WelcomeView /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/products-list"
+            element={
+              isAuthenticated ? <ProductList /> : <Navigate to="/" />
             }
           />
         </Routes>
