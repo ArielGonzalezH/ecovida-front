@@ -189,7 +189,7 @@ function AppContent({
             }
           />
           <Route
-            path="/products/:foundationId" component={FoundationsProduct}
+            path="/products/:found_id"
             element={
               isAuthenticated ? <FoundationsProduct /> : <Navigate to="/" />
             }
