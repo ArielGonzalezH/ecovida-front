@@ -37,7 +37,7 @@ const FoundationsClient = () => {
   );
 
   const handleOpenProductsPage = (foundationId) => {
-    navigate(`/products/${foundationId}`); // Cambia history.push por navigate
+    navigate(`/products/${foundationId}`);
   };
 
   return (
