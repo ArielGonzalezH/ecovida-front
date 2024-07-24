@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import UsersList from "./pages/UsersList";
 import FoundationsList from "./pages/FoundationsList";
 import FoundationsClient from "./pages/FoundationsClient";
+import FoundationsProduct from "./pages/FoundationsProduct";
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
@@ -191,6 +192,12 @@ function AppContent({
             path="/foundations-client"
             element={
               isAuthenticated ? <FoundationsClient /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/products/:foundationId" component={FoundationsProduct}
+            element={
+              isAuthenticated ? <FoundationsProduct /> : <Navigate to="/" />
             }
           />
         </Routes>
