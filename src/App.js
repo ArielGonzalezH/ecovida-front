@@ -25,7 +25,6 @@ import ProductList from './pages/ProductList';
 import NavbarNav from './components/NavbarNav';
 import Sidebar from './components/Sidebar';
 import SidebarFundations from './components/SidebarFundations';
-import ProductCard from './components/ProductCard';
 
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
