@@ -12,14 +12,10 @@ import config from "../src/config";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import NewQuotation from "./pages/NewQuotation";
-import Products from "./pages/Products";
-import PurchaseOrder from "./pages/PurchaseOrder";
-import Quotation from "./pages/Quotation";
-import Supplier from "./pages/Supplier";
 import UsersList from "./pages/UsersList";
 import FoundationsList from "./pages/FoundationsList";
 import VentasTotales from "./pages/VentasTotales";
+import FoundationsClient from "./pages/FoundationsClient";
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
@@ -28,7 +24,6 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import WelcomeView from "./pages/WelcomeView";
 import ProductList from "./pages/ProductList";
 
 function App() {
@@ -169,26 +164,6 @@ function AppContent({
             element={isAuthenticated ? <Home /> : <Navigate to="/" />}
           />
           <Route
-            path="/products"
-            element={isAuthenticated ? <Products /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/purchaseorder"
-            element={isAuthenticated ? <PurchaseOrder /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/quotation"
-            element={isAuthenticated ? <Quotation /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/newquotation"
-            element={isAuthenticated ? <NewQuotation /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/supplier"
-            element={isAuthenticated ? <Supplier /> : <Navigate to="/" />}
-          />
-          <Route
             path="/foundations-list"
             element={
               isAuthenticated ? <FoundationsList /> : <Navigate to="/" />
@@ -201,15 +176,15 @@ function AppContent({
             }
           />
           <Route
-            path="/home-foundation"
-            element={
-              isAuthenticated ? <WelcomeView /> : <Navigate to="/" />
-            }
-          />
-          <Route
             path="/products-list"
             element={
               isAuthenticated ? <ProductList /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/foundations-client"
+            element={
+              isAuthenticated ? <FoundationsClient /> : <Navigate to="/" />
             }
           />
           <Route
