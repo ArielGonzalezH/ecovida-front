@@ -189,7 +189,11 @@ function AppContent({
             }
           />
           <Route
+<<<<<<< HEAD
             path="/products/:found_id"
+=======
+            path="/products/:found_id" component={FoundationsProduct}
+>>>>>>> de2f7b16014de833309a9de7499982784748906f
             element={
               isAuthenticated ? <FoundationsProduct /> : <Navigate to="/" />
             }
