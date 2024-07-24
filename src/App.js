@@ -10,6 +10,7 @@ import "./App.scss";
 
 import config from "../src/config";
 
+<<<<<<< HEAD
 import Home from './pages/Home';
 import Login from './pages/Login';
 import NewQuotation from './pages/NewQuotation';
@@ -25,6 +26,20 @@ import ProductList from './pages/ProductList';
 import NavbarNav from './components/NavbarNav';
 import Sidebar from './components/Sidebar';
 import SidebarFundations from './components/SidebarFundations';
+=======
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import NewQuotation from "./pages/NewQuotation";
+import Products from "./pages/Products";
+import PurchaseOrder from "./pages/PurchaseOrder";
+import Quotation from "./pages/Quotation";
+import Supplier from "./pages/Supplier";
+import UsersList from "./pages/UsersList";
+import FoundationsList from "./pages/FoundationsList";
+
+import NavbarNav from "./components/NavbarNav";
+import Sidebar from "./components/Sidebar";
+>>>>>>> 35d90c3495111096716bf3208ac193924851fff4
 
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -144,18 +159,62 @@ function AppContent({
       >
         {isAuthenticated && <NavbarNav />}
         <Routes>
-          <Route path="/" element={isAuthenticated ? <Home setAuth={setAuth} /> : <Navigate to="/login" replace />} />
-          <Route path="/login" element={!isAuthenticated ? <Login setAuth={setAuth} /> : <Navigate to={location.state?.from || '/'} replace />} />
-          <Route path='/home' element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
-          <Route path='/prueba' element={isAuthenticated ? <Prueba /> : <Navigate to="/" />} />
-          <Route path='/home-foundation' element={isAuthenticated ? <WelcomeView/> : <Navigate to="/" />} />
-          <Route path='/products' element={isAuthenticated ? <Products /> : <Navigate to="/" />} />
-          <Route path='/purchaseorder' element={isAuthenticated ? <PurchaseOrder /> : <Navigate to="/" />} />
-          <Route path='/quotation' element={isAuthenticated ? <Quotation /> : <Navigate to='/' />} />
-          <Route path='/newquotation' element={isAuthenticated ? <NewQuotation /> : <Navigate to='/' />} />
-          <Route path='/supplier' element={isAuthenticated ? <Supplier /> : <Navigate to='/' />} />
-          <Route path='/foundations-list' element={isAuthenticated ? <FoundationsList /> : <Navigate to='/' />} />
-          <Route path='/productlist' element={isAuthenticated ? <ProductList /> : <Navigate to='/' />} />
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Home setAuth={setAuth} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              !isAuthenticated ? (
+                <Login setAuth={setAuth} />
+              ) : (
+                <Navigate to={location.state?.from || "/"} replace />
+              )
+            }
+          />
+          <Route
+            path="/home"
+            element={isAuthenticated ? <Home /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/products"
+            element={isAuthenticated ? <Products /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/purchaseorder"
+            element={isAuthenticated ? <PurchaseOrder /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/quotation"
+            element={isAuthenticated ? <Quotation /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/newquotation"
+            element={isAuthenticated ? <NewQuotation /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/supplier"
+            element={isAuthenticated ? <Supplier /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/foundations-list"
+            element={
+              isAuthenticated ? <FoundationsList /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              isAuthenticated ? <UsersList /> : <Navigate to="/" />
+            }
+          />
         </Routes>
       </div>
     </div>
