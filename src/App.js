@@ -14,6 +14,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import UsersList from "./pages/UsersList";
 import FoundationsList from "./pages/FoundationsList";
+import VentasTotales from "./pages/VentasTotales";
 import FoundationsClient from "./pages/FoundationsClient";
 import FoundationsProduct from "./pages/FoundationsProduct";
 
@@ -24,7 +25,6 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import WelcomeView from "./pages/WelcomeView";
 import ProductList from "./pages/ProductList";
 
 function App() {
@@ -177,12 +177,6 @@ function AppContent({
             }
           />
           <Route
-            path="/home-foundation"
-            element={
-              isAuthenticated ? <WelcomeView /> : <Navigate to="/" />
-            }
-          />
-          <Route
             path="/products-list"
             element={
               isAuthenticated ? <ProductList /> : <Navigate to="/" />
@@ -199,6 +193,12 @@ function AppContent({
             element={
               isAuthenticated ? <FoundationsProduct /> : <Navigate to="/" />
             }
+          />
+          <Route
+          path="/all-sales"
+          element={
+            isAuthenticated ? <VentasTotales /> : <Navigate to="/" />
+          }
           />
         </Routes>
       </div>
