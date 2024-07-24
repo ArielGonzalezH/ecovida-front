@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 
 const UsersList = () => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [role, setRole] = useState(null);
   const [user_name, setUserName] = useState("");
@@ -27,6 +28,7 @@ const UsersList = () => {
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
   const [openEditUserModal, setOpenEditUserModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
 
   const handleAddUser = async () => {
     const token = Cookies.get("token");
@@ -35,6 +37,7 @@ const UsersList = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Incluye el token en el encabezado
         },
         body: JSON.stringify({
           role_id: role?.role_id,
@@ -67,7 +70,7 @@ const UsersList = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Incluye el token en el encabezado
           },
           body: JSON.stringify({
             role_id: role?.role_id,
@@ -143,6 +146,7 @@ const UsersList = () => {
             "Desconocido",
         }));
         setUsers(usersWithRoleNames);
+        setFilteredUsers(usersWithRoleNames); // Inicialmente, el estado de usuarios filtrados es igual al de usuarios
       } else {
         toast.error("Error al cargar los usuarios");
       }
@@ -195,6 +199,17 @@ const UsersList = () => {
     }
   };
 
+  const filterUsers = (term) => {
+    const lowerCaseTerm = term.toLowerCase();
+    const filtered = users.filter(
+      (user) =>
+        user.user_name.toLowerCase().includes(lowerCaseTerm) ||
+        user.user_lastname.toLowerCase().includes(lowerCaseTerm) ||
+        user.user_email.toLowerCase().includes(lowerCaseTerm)
+    );
+    setFilteredUsers(filtered);
+  };
+
   useEffect(() => {
     loadRoles(); // Cargar roles primero para asegurarse de que están disponibles para mapear
   }, []);
@@ -204,6 +219,10 @@ const UsersList = () => {
       loadUsers();
     }
   }, [roles]);
+
+  useEffect(() => {
+    filterUsers(searchTerm); // Filtrar usuarios cuando el término de búsqueda cambia
+  }, [searchTerm, users]);
 
   return (
     <Box
@@ -238,6 +257,8 @@ const UsersList = () => {
           label="Buscar usuario"
           variant="outlined"
           sx={{ margin: 1 }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Actualiza el estado de búsqueda
         />
       </Box>
       <TableContainer
@@ -261,7 +282,7 @@ const UsersList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <TableRow key={user.user_id}>
                 <TableCell>{user.role_name}</TableCell>
                 <TableCell>{user.user_name}</TableCell>
@@ -270,16 +291,16 @@ const UsersList = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="primary"
-                    sx={{ marginRight: "1rem" }}
+                    color="secondary"
                     onClick={() => handleOpenEditUser(user)}
                   >
                     Editar
                   </Button>
                   <Button
                     variant="contained"
-                    sx={{ bgcolor: "red" }}
+                    color="error"
                     onClick={() => deleteUser(user.user_id)}
+                    sx={{ marginLeft: 1 }}
                   >
                     Eliminar
                   </Button>
@@ -289,10 +310,11 @@ const UsersList = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Modal open={openAddUserModal} onClose={() => {
-        setOpenAddUserModal(false);
-        resetAddUserFields();
-      }}>
+
+      <Modal
+        open={openAddUserModal}
+        onClose={() => setOpenAddUserModal(false)}
+      >
         <Box
           sx={{
             position: "absolute",
@@ -301,64 +323,77 @@ const UsersList = () => {
             transform: "translate(-50%, -50%)",
             width: 400,
             bgcolor: "background.paper",
-            border: "2px solid #000",
+            borderRadius: "8px",
             boxShadow: 24,
             p: 4,
           }}
         >
-          <h2>Crear Usuario</h2>
+          <h2>Agregar Usuario</h2>
           <TextField
+            id="user_name"
             label="Nombre"
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_name}
             onChange={(e) => setUserName(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <TextField
+            id="user_lastname"
             label="Apellido"
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_lastname}
             onChange={(e) => setUserLastName(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <TextField
+            id="user_email"
             label="Correo"
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_email}
             onChange={(e) => setUserEmail(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <TextField
+            id="user_password"
             label="Contraseña"
+            variant="outlined"
             type="password"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_password}
             onChange={(e) => setUserPassword(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <Autocomplete
             options={roles}
             getOptionLabel={(option) => option.role_name}
-            value={role}
             onChange={(event, newValue) => setRole(newValue)}
             renderInput={(params) => (
-              <TextField {...params} label="Rol" margin="normal" fullWidth />
+              <TextField
+                {...params}
+                label="Rol"
+                variant="outlined"
+                fullWidth
+              />
             )}
+            sx={{ marginBottom: 2 }}
           />
           <Button
             variant="contained"
             color="primary"
             onClick={handleAddUser}
-            sx={{ marginTop: 2 }}
           >
-            Crear Usuario
+            Agregar
           </Button>
         </Box>
       </Modal>
-      <Modal open={openEditUserModal} onClose={() => {
-        setOpenEditUserModal(false);
-        resetEditUserFields();
-      }}>
+
+      <Modal
+        open={openEditUserModal}
+        onClose={() => setOpenEditUserModal(false)}
+      >
         <Box
           sx={{
             position: "absolute",
@@ -367,40 +402,48 @@ const UsersList = () => {
             transform: "translate(-50%, -50%)",
             width: 400,
             bgcolor: "background.paper",
-            border: "2px solid #000",
+            borderRadius: "8px",
             boxShadow: 24,
             p: 4,
           }}
         >
           <h2>Editar Usuario</h2>
           <TextField
+            id="user_name"
             label="Nombre"
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_name}
             onChange={(e) => setUserName(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <TextField
+            id="user_lastname"
             label="Apellido"
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_lastname}
             onChange={(e) => setUserLastName(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <TextField
+            id="user_email"
             label="Correo"
+            variant="outlined"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_email}
             onChange={(e) => setUserEmail(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <TextField
+            id="user_password"
             label="Contraseña"
+            variant="outlined"
             type="password"
+            fullWidth
+            sx={{ marginBottom: 2 }}
             value={user_password}
             onChange={(e) => setUserPassword(e.target.value)}
-            fullWidth
-            margin="normal"
           />
           <Autocomplete
             options={roles}
@@ -408,16 +451,21 @@ const UsersList = () => {
             value={role}
             onChange={(event, newValue) => setRole(newValue)}
             renderInput={(params) => (
-              <TextField {...params} label="Rol" margin="normal" fullWidth />
+              <TextField
+                {...params}
+                label="Rol"
+                variant="outlined"
+                fullWidth
+              />
             )}
+            sx={{ marginBottom: 2 }}
           />
           <Button
             variant="contained"
             color="primary"
             onClick={handleEditUser}
-            sx={{ marginTop: 2 }}
           >
-            Editar Usuario
+            Editar
           </Button>
         </Box>
       </Modal>
