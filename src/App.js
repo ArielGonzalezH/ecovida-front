@@ -27,6 +27,8 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import WelcomeView from "./pages/WelcomeView";
+import ProductList from "./pages/ProductList";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -195,6 +197,18 @@ function AppContent({
             path="/users"
             element={
               isAuthenticated ? <UsersList /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/home-foundation"
+            element={
+              isAuthenticated ? <WelcomeView /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/products-list"
+            element={
+              isAuthenticated ? <ProductList /> : <Navigate to="/" />
             }
           />
         </Routes>
