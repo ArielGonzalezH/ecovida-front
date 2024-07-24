@@ -10,11 +10,19 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
+import Cookies from 'js-cookie';
 
 function NavbarNav(args) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
+
+  const handleLogout = () => {
+    Cookies.remove('token');
+    Cookies.remove('user');
+    
+    window.location.reload();
+  };
 
   return (
     <div>
@@ -31,7 +39,7 @@ function NavbarNav(args) {
                 <DropdownItem>Mi perfil</DropdownItem>
                 <DropdownItem>Configuraciones</DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem>Cerrar sesión</DropdownItem>
+                <DropdownItem onClick={handleLogout}>Cerrar sesión</DropdownItem>
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
