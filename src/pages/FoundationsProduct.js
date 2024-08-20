@@ -1,13 +1,7 @@
+// FoundationsProduct.js
 import {
-<<<<<<< HEAD
   Box,
   Button,
-=======
-  Autocomplete,
-  Box,
-  Button,
-  Modal,
->>>>>>> de2f7b16014de833309a9de7499982784748906f
   Paper,
   Table,
   TableBody,
@@ -15,36 +9,25 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-<<<<<<< HEAD
-=======
   TextField,
->>>>>>> de2f7b16014de833309a9de7499982784748906f
-  Select,
-  MenuItem,
-  InputLabel,
 } from "@mui/material";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-<<<<<<< HEAD
 import { useParams } from "react-router-dom";
-=======
-import { useParams } from "react-router-dom"; // Importar useParams
->>>>>>> de2f7b16014de833309a9de7499982784748906f
 import { toast } from "react-toastify";
+import { useCart } from "./cartContext";
 
 const FoundationsProduct = () => {
   const [products, setProducts] = useState([]);
-<<<<<<< HEAD
-  const [selectedFoundation, setSelectedFoundation] = useState(); // Asigna un valor temporal para probar
-  const [cart, setCart] = useState([]);
-  const [quantity, setQuantity] = useState(1);
-  const { id } = useParams();
+  const [quantities, setQuantities] = useState({});
+  const { addToCart } = useCart();
+
+  const { found_id } = useParams();
 
   const loadProducts = async () => {
     const token = Cookies.get("token");
-    console.log(`http://localhost/api/products/productos/foundation/${id}`);
     try {
-      const res = await fetch(`http://localhost/api/products/productos/foundation/${id}`, {
+      const res = await fetch(`http://localhost/api/products/productos/foundation/${found_id}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -56,10 +39,15 @@ const FoundationsProduct = () => {
 
       const data = await res.json();
 
-      console.log("Datos de productos recibidos:", data); // Imprimir datos para verificar
+      console.log("Datos de productos recibidos:", data);
 
       if (Array.isArray(data)) {
-        setProducts(data.filter((product) => product.found_id === selectedFoundation.found_id));
+        setProducts(data.filter(product => product.found_id === Number(found_id)));
+        const initialQuantities = {};
+        data.forEach(product => {
+          initialQuantities[product.product_id] = 1; // Inicializar con 1
+        });
+        setQuantities(initialQuantities);
       } else {
         toast.error("Error al cargar los productos");
       }
@@ -68,87 +56,69 @@ const FoundationsProduct = () => {
     }
   };
 
-  const addToCart = (product) => {
+  const handleAddToCart = (product) => {
+    const quantity = quantities[product.product_id];
     if (quantity > product.product_stock) {
       toast.error("La cantidad no puede superar el stock disponible.");
       return;
     }
 
-    setCart([...cart, { ...product, quantity }]);
+    addToCart(product, quantity);
     toast.success("Producto agregado al carrito.");
   };
 
-  useEffect(() => {
-    if (selectedFoundation) {
-      console.log("Cargando productos...");
-      loadProducts();
+  const handleQuantityChange = (product_id, value) => {
+    const numValue = Number(value);
+    if (numValue > 0 && numValue <= products.find(p => p.product_id === product_id).product_stock) {
+      setQuantities(prevQuantities => ({
+        ...prevQuantities,
+        [product_id]: numValue,
+      }));
+    } else {
+      toast.error("Cantidad inválida.");
     }
-  }, [selectedFoundation]);
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        height: "100%",
-        backgroundColor: "rgb(240, 242, 245)",
-      }}
-    >
-      <h1>Productos</h1>
-      <TableContainer
-        component={Paper}
-        sx={{
-          width: "80%",
-          maxHeight: 300,
-          overflowX: "scroll",
-          overflowY: "scroll",
-          marginTop: "1rem",
-        }}
-      >
+    <Box m={2}>
+      <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Nombre</TableCell>
+              <TableCell>Nombre del producto</TableCell>
+              <TableCell>Descripción</TableCell>
               <TableCell>Precio</TableCell>
               <TableCell>Stock</TableCell>
-              <TableCell>Fecha de Vencimiento</TableCell>
-              <TableCell>Descripción</TableCell>
               <TableCell>Cantidad</TableCell>
-              <TableCell>Acciones</TableCell>
+              <TableCell>Agregar al carrito</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {products.map((product) => (
               <TableRow key={product.product_id}>
                 <TableCell>{product.product_name}</TableCell>
+                <TableCell>{product.product_desc}</TableCell>
                 <TableCell>{product.product_price}</TableCell>
                 <TableCell>{product.product_stock}</TableCell>
-                <TableCell>{product.product_duedate}</TableCell>
-                <TableCell>{product.product_description}</TableCell>
                 <TableCell>
-                  <InputLabel htmlFor="quantity">Cantidad</InputLabel>
-                  <Select
-                    id="quantity"
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    sx={{ width: "100px" }}
-                  >
-                    {[...Array(product.product_stock).keys()].map((num) => (
-                      <MenuItem key={num + 1} value={num + 1}>
-                        {num + 1}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <TextField
+                    type="number"
+                    value={quantities[product.product_id] || 1}
+                    onChange={(e) => handleQuantityChange(product.product_id, e.target.value)}
+                    inputProps={{ min: 1, max: product.product_stock }}
+                  />
                 </TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => addToCart(product)}
+                    onClick={() => handleAddToCart(product)}
                   >
-                    Agregar al Carrito
+                    Agregar al carrito
                   </Button>
                 </TableCell>
               </TableRow>
@@ -156,139 +126,8 @@ const FoundationsProduct = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Modal y demás elementos */}
     </Box>
   );
 };
 
 export default FoundationsProduct;
-=======
-  const [selectedFoundation, setSelectedFoundation] = useState(null);
-  const [openAddProductModal, setOpenAddProductModal] = useState(false);
-  const [cart, setCart] = useState([]);
-  const [quantity, setQuantity] = useState(1);
-
-  const { found_id } = useParams(); // Obtener found_id de la URL
-
-  const loadProducts = async () => {
-      const token = Cookies.get("token");
-      try {
-          const res = await fetch(`http://localhost/api/products/productos/foundation/${found_id}`, {
-              method: "GET",
-              headers: { Authorization: `Bearer ${token}` },
-          });
-
-          if (!res.ok) {
-              console.log("Error en la respuesta del servidor ", res);
-              throw new Error("Error en la respuesta del servidor");
-          }
-
-          const data = await res.json();
-
-          console.log("Datos de productos recibidos:", data); // Imprimir datos para verificar
-
-          if (Array.isArray(data)) {
-              // Filtrar productos por found_id
-              setProducts(data.filter(product => product.found_id === Number(found_id)));
-          } else {
-              toast.error("Error al cargar los productos");
-          }
-      } catch (error) {
-          console.error(error);
-      }
-  };
-
-  const addToCart = (product) => {
-      if (quantity > product.product_stock) {
-          toast.error("La cantidad no puede superar el stock disponible.");
-          return;
-      }
-
-      setCart([...cart, { ...product, quantity }]);
-      toast.success("Producto agregado al carrito.");
-  };
-
-  useEffect(() => {
-    console.log("found_id1:", found_id); // Imprimir found_id para verificar
-      if (found_id) {
-        console.log("found_id:", found_id); // Imprimir found_id para verificar
-          loadProducts();
-      }
-  }, [found_id]);
-
-  return (
-      <Box
-          sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              height: "100%",
-              backgroundColor: "rgb(240, 242, 245)",
-          }}
-      >
-          <h1>Productos</h1>
-          <TableContainer
-              component={Paper}
-              sx={{
-                  width: "80%",
-                  maxHeight: 300,
-                  overflowX: "scroll",
-                  overflowY: "scroll",
-                  marginTop: "1rem",
-              }}
-          >
-              <Table>
-                  <TableHead>
-                      <TableRow>
-                          <TableCell>Nombre</TableCell>
-                          <TableCell>Precio</TableCell>
-                          <TableCell>Stock</TableCell>
-                          <TableCell>Fecha de Vencimiento</TableCell>
-                          <TableCell>Descripción</TableCell>
-                          <TableCell>Cantidad</TableCell>
-                          <TableCell>Acciones</TableCell>
-                      </TableRow>
-                  </TableHead>
-                  <TableBody>
-                      {products.map((product) => (
-                          <TableRow key={product.product_id}>
-                              <TableCell>{product.product_name}</TableCell>
-                              <TableCell>{product.product_price}</TableCell>
-                              <TableCell>{product.product_stock}</TableCell>
-                              <TableCell>{product.product_duedate}</TableCell>
-                              <TableCell>{product.product_description}</TableCell>
-                              <TableCell>
-                                  <InputLabel htmlFor="quantity">Cantidad</InputLabel>
-                                  <Select
-                                      id="quantity"
-                                      value={quantity}
-                                      onChange={(e) => setQuantity(Number(e.target.value))}
-                                      sx={{ width: "100px" }}
-                                  >
-                                      {[...Array(product.product_stock).keys()].map(num => (
-                                          <MenuItem key={num + 1} value={num + 1}>{num + 1}</MenuItem>
-                                      ))}
-                                  </Select>
-                              </TableCell>
-                              <TableCell>
-                                  <Button
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={() => addToCart(product)}
-                                  >
-                                      Agregar al Carrito
-                                  </Button>
-                              </TableCell>
-                          </TableRow>
-                      ))}
-                  </TableBody>
-              </Table>
-          </TableContainer>
-          {/* Modal y demás elementos */}
-      </Box>
-  );
-};
-
-export default FoundationsProduct;
->>>>>>> de2f7b16014de833309a9de7499982784748906f

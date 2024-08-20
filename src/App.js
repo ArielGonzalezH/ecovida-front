@@ -1,3 +1,4 @@
+// App.js
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,6 +18,7 @@ import FoundationsList from "./pages/FoundationsList";
 import VentasTotales from "./pages/VentasTotales";
 import FoundationsClient from "./pages/FoundationsClient";
 import FoundationsProduct from "./pages/FoundationsProduct";
+import CartPage from "./pages/CartPage";
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
@@ -26,6 +28,7 @@ import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProductList from "./pages/ProductList";
+import { CartProvider } from "./pages/cartContext";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -96,27 +99,29 @@ function App() {
   };
 
   return (
-    <Router>
-      <AppContent
-        isAuthenticated={isAuthenticated}
-        setAuth={setAuth}
-        authChecked={authChecked}
-        handleLogin={handleLogin}
-        sidebarVisible={sidebarVisible}
-        toggleSidebar={toggleSidebar}
-      />
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </Router>
+    <CartProvider>
+      <Router>
+        <AppContent
+          isAuthenticated={isAuthenticated}
+          setAuth={setAuth}
+          authChecked={authChecked}
+          handleLogin={handleLogin}
+          sidebarVisible={sidebarVisible}
+          toggleSidebar={toggleSidebar}
+        />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </Router>
+    </CartProvider>
   );
 }
 
@@ -189,11 +194,7 @@ function AppContent({
             }
           />
           <Route
-<<<<<<< HEAD
-            path="/products/:found_id"
-=======
             path="/products/:found_id" component={FoundationsProduct}
->>>>>>> de2f7b16014de833309a9de7499982784748906f
             element={
               isAuthenticated ? <FoundationsProduct /> : <Navigate to="/" />
             }
@@ -204,6 +205,12 @@ function AppContent({
             isAuthenticated ? <VentasTotales /> : <Navigate to="/" />
           }
           />
+          <Route
+            path="/cart"
+            element={
+              isAuthenticated ? <CartPage /> : <Navigate to="/" />
+            }
+          />  
         </Routes>
       </div>
     </div>

@@ -3,7 +3,7 @@ import React, { Fragment, useState } from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { toast } from "react-toastify";
-import logo from '../assets/TWG_LogoGris.jpg';
+import logo from '../assets/images.png';
 import Cookies from 'js-cookie'
 
 const Login = ({ setAuth }) => {

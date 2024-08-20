@@ -200,9 +200,6 @@ import {
                     <TableCell>{product.product_duedate}</TableCell>
                     <TableCell>{product.product_description}</TableCell>
                     <TableCell>
-                      <Button variant="contained" color="primary" sx={{ marginRight: "1rem"}}>
-                        Editar
-                      </Button>
                       <Button variant="contained" sx={{ bgcolor: "red" }}
                         onClick={() => deleteProduct(product.product_id)}
                       >
