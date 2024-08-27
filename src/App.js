@@ -19,6 +19,7 @@ import VentasTotales from "./pages/VentasTotales";
 import FoundationsClient from "./pages/FoundationsClient";
 import FoundationsProduct from "./pages/FoundationsProduct";
 import CartPage from "./pages/CartPage";
+import PackageList from "./pages/PackageList";
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
@@ -194,23 +195,29 @@ function AppContent({
             }
           />
           <Route
+            path="/products-states"
+            element={
+              isAuthenticated ? <PackageList /> : <Navigate to="/" />
+            }
+          />
+          <Route
             path="/products/:found_id" component={FoundationsProduct}
             element={
               isAuthenticated ? <FoundationsProduct /> : <Navigate to="/" />
             }
           />
           <Route
-          path="/all-sales"
-          element={
-            isAuthenticated ? <VentasTotales /> : <Navigate to="/" />
-          }
+            path="/all-sales"
+            element={
+              isAuthenticated ? <VentasTotales /> : <Navigate to="/" />
+            }
           />
           <Route
             path="/cart"
             element={
               isAuthenticated ? <CartPage /> : <Navigate to="/" />
             }
-          />  
+          />
         </Routes>
       </div>
     </div>

@@ -66,7 +66,7 @@ const CartPage = () => {
 
   const handleAddCreditCard = async () => {
     if (!validateCreditCardInfo()) {
-      return;
+        return;
     }
 
     setOpenCreditCardModal(false);
@@ -79,34 +79,114 @@ const CartPage = () => {
     const token = Cookies.get("token");
 
     const sale_header = {
-      user_id: user_id,
-      sale_date: date,
-      sale_sub: sub,
-      sale_IVA: iva,
-      sale_total: total
+        user_id: user_id,
+        sale_date: date,
+        sale_sub: sub,
+        sale_IVA: iva,
+        sale_total: total
     };
 
     try {
-      const response = await fetch('http://localhost/api/sale_headers/sale_header', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(sale_header)
-      });
-      if (response.ok) {
-        toast.success("Compra realizada con éxito.");
-        
-        clearCart();
-      } else {
-        const errorData = await response.json();
-        toast.error(`Error al realizar la compra: ${errorData.message}`);
-      }
+        // Enviar el encabezado de la venta
+        const responseHeader = await fetch('http://localhost/api/sale_headers/sale_header', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(sale_header)
+        });
+
+        if (responseHeader.ok) {
+            toast.success("Cabecera creada con éxito.");
+
+            // Enviar los detalles de la venta uno por uno y recolectar los resultados
+            const detailCreationResults = await Promise.all(cart.map(async (item) => {
+                // Obtener el ID del encabezado de la venta
+                const responseHeaderId = await fetch(`http://localhost/api/sale_headers/sale_header/${user_id}/user`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (responseHeaderId.ok) {
+                    const saleHeaderData = await responseHeaderId.json();
+                    const sale_header_id = saleHeaderData.sh_id;
+
+                    const sale_detail = {
+                        sale_header_id: sale_header_id,
+                        product_id: item.product_id,
+                        item_quantity: item.quantity
+                    };
+
+                    try {
+                        const responseDetail = await fetch('http://localhost/api/sale_items/sale_item', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(sale_detail)
+                        });
+
+                        if (!responseDetail.ok) {
+                            const errorData = await responseDetail.json();
+                            return { success: false, product_id: item.product_id, message: errorData.message };
+                        }
+                        return { success: true, product_id: item.product_id };
+                    } catch (error) {
+                        return { success: false, product_id: item.product_id, message: error.message };
+                    }
+                } else {
+                    const errorData = await responseHeaderId.json();
+                    return { success: false, product_id: item.product_id, message: `Error al obtener el ID del encabezado de la venta: ${errorData.message}` };
+                }
+            }));
+
+            console.log("Detail Creation Results:", detailCreationResults);
+
+            // Verificar si todos los detalles se crearon correctamente
+            const allDetailsCreated = detailCreationResults.every(result => result.success);
+
+            if (allDetailsCreated) {
+                // Actualizar el stock de los productos uno por uno
+                const updateStockPromises = cart.map((item) => {
+                    const newStock = item.product_stock - item.quantity;
+                    return fetch(`http://localhost/api/products/productos/${item.product_id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ product_stock: newStock })
+                    });
+                });
+
+                const updateStockResponses = await Promise.all(updateStockPromises);
+
+                const allStockUpdated = updateStockResponses.every(response => response.ok);
+
+                if (allStockUpdated) {
+                    toast.success("Compra realizada con éxito y stock actualizado.");
+                } else {
+                    toast.error("Error al actualizar el stock de algunos productos.");
+                }
+
+                clearCart();
+            } else {
+                toast.error("Error al registrar algunos detalles de la venta. No se ha actualizado el stock.");
+            }
+        } else {
+            const errorData = await responseHeader.json();
+            toast.error(`Error al crear la cabecera de la venta: ${errorData.message}`);
+        }
     } catch (error) {
-      toast.error(`Error al realizar la compra: ${error.message}`);
+        toast.error(`Error al realizar la compra: ${error.message}`);
     }
-  };
+};
+
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
