@@ -90,6 +90,7 @@ const FoundationsProduct = () => {
     }
 
     addToCart(product, quantity);
+    console.log("Producto agregado: ", product, "Cantidad: ", quantity);
     toast.success("Producto agregado al carrito.");
   };
 
@@ -133,7 +134,7 @@ const FoundationsProduct = () => {
             {products.map((product) => (
               <TableRow key={product.product_id}>
                 <TableCell>{product.product_name}</TableCell>
-                <TableCell>{product.product_desc}</TableCell>
+                <TableCell>{product.product_description}</TableCell>
                 <TableCell>{product.product_price}</TableCell>
                 <TableCell>{product.product_stock}</TableCell>
                 <TableCell>
