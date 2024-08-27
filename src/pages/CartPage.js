@@ -134,7 +134,7 @@ const CartPage = () => {
                             const errorData = await responseDetail.json();
                             return { success: false, product_id: item.product_id, message: errorData.message };
                         }
-                        return { success: true, product_id: item.product_id };
+                        return { success: true, product_id: item.product_id, sale_header_id: sale_header_id };
                     } catch (error) {
                         return { success: false, product_id: item.product_id, message: error.message };
                     }
@@ -169,11 +169,37 @@ const CartPage = () => {
 
                 if (allStockUpdated) {
                     toast.success("Compra realizada con éxito y stock actualizado.");
+                    
+                    // Crear el paquete
+                    const sale_header_id = detailCreationResults[0].sale_header_id; // Suponiendo que todos los detalles tienen el mismo ID
+                    const package_datail = {
+                        sale_header_id: sale_header_id
+                    };
+
+                    try {
+                        const responsePackage = await fetch('http://localhost/api/packages/package', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(package_datail)
+                        });
+
+                        if (!responsePackage.ok) {
+                            const errorData = await responsePackage.json();
+                            toast.error(`Error al crear el paquete: ${errorData.message}`);
+                        } else {
+                            toast.success("Paquete creado con éxito.");
+                        }
+                    } catch (error) {
+                        toast.error(`Error al crear el paquete: ${error.message}`);
+                    }
+                    
+                    clearCart();
                 } else {
                     toast.error("Error al actualizar el stock de algunos productos.");
                 }
-
-                clearCart();
             } else {
                 toast.error("Error al registrar algunos detalles de la venta. No se ha actualizado el stock.");
             }
@@ -185,6 +211,7 @@ const CartPage = () => {
         toast.error(`Error al realizar la compra: ${error.message}`);
     }
 };
+
 
   
 
