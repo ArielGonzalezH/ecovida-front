@@ -20,6 +20,7 @@ import FoundationsClient from "./pages/FoundationsClient";
 import FoundationsProduct from "./pages/FoundationsProduct";
 import CartPage from "./pages/CartPage";
 import PackageList from "./pages/PackageList";
+import OrderHistoryPage from "./pages/OrderHistoryPage"
 
 import NavbarNav from "./components/NavbarNav";
 import Sidebar from "./components/Sidebar";
@@ -216,6 +217,12 @@ function AppContent({
             path="/cart"
             element={
               isAuthenticated ? <CartPage /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/OrderHistoryPage"
+            element = {
+              isAuthenticated ? <OrderHistoryPage/> : <Navigate to="/"/>
             }
           />
         </Routes>

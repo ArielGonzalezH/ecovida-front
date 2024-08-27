@@ -116,7 +116,21 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
             </NavLink>
           </li>
         )}
-        
+        {role_id == 3 && (
+          <li>
+            <NavLink
+              to="/OrderHistoryPage"
+              className="text-dark runded py-2 w-100 d-inkline-block px-3"
+              exact
+              activeClassName="activate"
+            >
+              <FaIcons.FaList  className="icon" />{" "}
+              <span className="text">Historico de pedidos</span>
+            </NavLink>
+          </li>
+        )
+
+        }
       </ul>
     </div>
   );
