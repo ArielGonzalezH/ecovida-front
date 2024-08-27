@@ -62,7 +62,7 @@ const FoundationsClient = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{marginTop: "2rem"}}>
         {filteredFoundations.map((foundation) => (
           <Grid item xs={12} sm={6} md={4} key={foundation.found_id}>
             <Card sx={{ maxWidth: 345 }} onClick={() => handleOpenProductsPage(foundation.found_id)}>

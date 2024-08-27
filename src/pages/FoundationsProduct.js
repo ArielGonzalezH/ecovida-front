@@ -10,18 +10,20 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useCart } from "./cartContext";
 
 const FoundationsProduct = () => {
   const [products, setProducts] = useState([]);
+  const [foundation, setFoundation] = useState([]);
   const [quantities, setQuantities] = useState({});
   const { addToCart } = useCart();
-
+  const navigate = useNavigate();
   const { found_id } = useParams();
 
   const loadProducts = async () => {
@@ -56,6 +58,30 @@ const FoundationsProduct = () => {
     }
   };
 
+  const loadFoundation = async () => {
+    const token = Cookies.get("token");
+    try {
+      const res = await fetch(`http://localhost/api/foundations/${found_id}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        console.log("Error en la respuesta del servidor ", res);
+        throw new Error("Error en la respuesta del servidor");
+      }
+
+      const data = await res.json();
+      setFoundation(data); // Establece los datos de la fundación en el estado
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    loadProducts();
+    loadFoundation(); // Cargar la información de la fundación cuando se monta el componente
+  }, []);
+  
   const handleAddToCart = (product) => {
     const quantity = quantities[product.product_id];
     if (quantity > product.product_stock) {
@@ -64,6 +90,7 @@ const FoundationsProduct = () => {
     }
 
     addToCart(product, quantity);
+    console.log("Producto agregado: ", product, "Cantidad: ", quantity);
     toast.success("Producto agregado al carrito.");
   };
 
@@ -79,12 +106,18 @@ const FoundationsProduct = () => {
     }
   };
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
+  
 
   return (
     <Box m={2}>
+      <Button variant="outlined" onClick={() => navigate(-1)}>
+        Volver
+      </Button>
+      {foundation && (
+        <Typography variant="h4" sx={{ marginTop: 2 }}>
+          Productos de la Fundación: {foundation ? foundation.found_name : "Fundación desconocida"}
+        </Typography>
+      )}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -101,7 +134,7 @@ const FoundationsProduct = () => {
             {products.map((product) => (
               <TableRow key={product.product_id}>
                 <TableCell>{product.product_name}</TableCell>
-                <TableCell>{product.product_desc}</TableCell>
+                <TableCell>{product.product_description}</TableCell>
                 <TableCell>{product.product_price}</TableCell>
                 <TableCell>{product.product_stock}</TableCell>
                 <TableCell>
