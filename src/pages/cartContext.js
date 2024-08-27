@@ -7,6 +7,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
   const addToCart = (product, quantity) => {
+    console.log('Agregando al carrito:', product, quantity);
     setCart(prevCart => [...prevCart, { ...product, quantity }]);
   };
 
