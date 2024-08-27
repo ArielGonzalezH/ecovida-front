@@ -15,12 +15,9 @@ import {
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-<<<<<<< HEAD
 import soapRequest from "easy-soap-request";
 import axios from "axios";
 
-=======
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -39,11 +36,12 @@ const ProductList = () => {
   const [comments, setComments] = useState([]);
   const [openCommentListModal, setOpenCommentListModal] = useState(false);
 
-  const loadComments = async (product_id) => {
+  const loadComments = async (product_product_id) => {
+    console.log("Cargando comentarios para el producto con ID:", product_product_id);
     const token = Cookies.get("token");
     try {
       const res = await fetch(
-        `http://localhost/api/comments/comentarios/${product_id}`,
+        `http://localhost/api/comments/comentarios/${product_product_id}`,
         {
           method: "GET",
           headers: {
@@ -73,21 +71,10 @@ const ProductList = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-<<<<<<< HEAD
       if (res.ok) {
         const data = await res.json();
         setFoundations(data);
         console.log("Fundaciones cargadas:", data);
-=======
-      if (!res.ok) {
-        console.log("Error en la respuesta del servidor ", res);
-        throw new Error("Error en la respuesta del servidor");
-      }
-
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setFoundations(data);
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
       } else {
         toast.error("Error al cargar las fundaciones");
       }
@@ -96,10 +83,6 @@ const ProductList = () => {
     }
   };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
   const handleAddProduct = async () => {
     const token = Cookies.get("token");
     try {
@@ -131,10 +114,6 @@ const ProductList = () => {
     }
   };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
   const handleAddComment = async (product_id) => {
     const token = Cookies.get("token");
     const userCookie = Cookies.get("user");
@@ -196,7 +175,7 @@ const ProductList = () => {
       const productsWithFoundation = data.foundations.flatMap((foundation) =>
         foundation.products.map((product) => ({
           ...product,
-          foundationName: foundation.foundation.found_name, // Agregar el nombre de la fundación al producto
+          foundationName: foundation.foundation.foundation_found_name, // Agregar el nombre de la fundación al producto
         }))
       );
 
@@ -212,7 +191,7 @@ const ProductList = () => {
     const token = Cookies.get("token");
     try {
       const res = await fetch(
-        `http://localhost/api/products/productos/${selectedProduct.product_id}`,
+        `http://localhost/api/products/productos/${selectedProduct.product_product_id}`,
         {
           method: "PUT",
           headers: {
@@ -221,7 +200,7 @@ const ProductList = () => {
           },
           body: JSON.stringify({
             found_id:
-              selectedFoundation?.found_id || selectedProduct.found_id,
+              selectedFoundation?.foundation_found_id || selectedProduct.product_found_id,
             product_name: productName,
             product_price: productPrice,
             product_stock: productStock,
@@ -272,17 +251,10 @@ const ProductList = () => {
     setProductStock(product.product_stock);
     setProductDueDate(new Date(product.product_duedate).toISOString().split('T')[0]);
     setProductDescription(product.product_description);
-<<<<<<< HEAD
   
     const associatedFoundation = foundations.find((foundation) => foundation.found_id === product.found_id);
     setSelectedFoundation(associatedFoundation || null);
   
-=======
-    setSelectedFoundation(
-      foundations.find((foundation) => foundation.found_id === product.found_id) ||
-        null
-    );
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
     setOpenEditProductModal(true);
   };
 
@@ -349,15 +321,14 @@ const ProductList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-<<<<<<< HEAD
             {products.map((product) => (
-              <TableRow key={product.product_id}>
-                <TableCell>{product.product_name}</TableCell>
+              <TableRow key={product.product_product_id}>
+                <TableCell>{product.product_product_name}</TableCell>
                 <TableCell>{product.foundationName}</TableCell> {/* Mostrar el nombre de la fundación */}
-                <TableCell>{product.product_price}</TableCell>
-                <TableCell>{product.product_stock}</TableCell>
-                <TableCell>{new Date(product.product_duedate).toLocaleDateString()}</TableCell>
-                <TableCell>{product.product_description}</TableCell>
+                <TableCell>{product.product_product_price}</TableCell>
+                <TableCell>{product.product_product_stock}</TableCell>
+                <TableCell>{new Date(product.product_product_duedate).toLocaleDateString()}</TableCell>
+                <TableCell>{product.product_product_description}</TableCell>
                 <TableCell>
                   <Box display="flex" gap={1}>
                     <Button
@@ -370,80 +341,75 @@ const ProductList = () => {
                     <Button
                       variant="contained"
                       sx={{ bgcolor: "red" }}
-                      onClick={() => deleteProduct(product.product_id)}
+                      onClick={() => deleteProduct(product.product_product_id)}
                     >
                       Eliminar
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{ bgcolor: "green", marginRight: 1 }}
+                        onClick={() => {
+                          setSelectedProduct(product.product_product_id);
+                          loadComments(product.product_product_id);
+                        }}
+                      >
+                        Ver Comentarios
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{ bgcolor: "blue" }}
+                        onClick={() => {
+                          setSelectedProduct(product.product_product_id);
+                          setOpenCommentModal(true);
+                        }}
+                      >
+                        Añadir Comentario
                     </Button>
                   </Box>
                 </TableCell>
               </TableRow>
             ))}
-=======
-            {products.map((product) => {
-              // Encontrar la fundación asociada al producto
-              const foundation = foundations.find(
-                (f) => f.found_id === product.found_id
-              );
-              return (
-                <TableRow key={product.product_id}>
-                  <TableCell>{product.product_name}</TableCell>
-                  <TableCell>
-                    {foundation ? foundation.found_name : "Fundación desconocida"}
-                  </TableCell>
-                  <TableCell>{product.product_price}</TableCell>
-                  <TableCell>{product.product_stock}</TableCell>
-                  <TableCell>{product.product_duedate}</TableCell>
-                  <TableCell>{product.product_description}</TableCell>
-                  <TableCell>
-                    <Box display="flex" gap={1}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() =>
-                          handleOpenEditProductModal(product)
-                        }
-                      >
-                        Editar
-                      </Button>
-                      <Button
-                        variant="contained"
-                        sx={{ bgcolor: "red" }}
-                        onClick={() => deleteProduct(product.product_id)}
-                      >
-                        Eliminar
-                      </Button>
-                      <Button
-                        variant="contained"
-                        sx={{ bgcolor: "green", marginRight: 1 }}
-                        onClick={() => {
-                          setSelectedProduct(product.product_id);
-                          loadComments(product.product_id);
-                        }}
-                      >
-                        Ver Comentarios
-                      </Button>
-                      <Button
-                        variant="contained"
-                        sx={{ bgcolor: "blue" }}
-                        onClick={() => {
-                          setSelectedProduct(product.product_id);
-                          setOpenCommentModal(true);
-                        }}
-                      >
-                        Añadir Comentario
-                      </Button>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
           </TableBody>
 
 
         </Table>
       </TableContainer>
-
+      <Modal
+        open={openCommentListModal}
+        onClose={() => setOpenCommentListModal(false)}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            boxShadow: 24,
+            p: 4,
+            maxHeight: "80vh",
+            overflowY: "auto",
+          }}
+        >
+          <h2>Comentarios</h2>
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <Paper key={index} sx={{ padding: 2, margin: 1, width: "100%" }}>
+                <p>
+                  <strong>Usuario ID:</strong> {comment.user_id}
+                </p>
+                <p>{comment.comment_text}</p>
+              </Paper>
+            ))
+          ) : (
+            <p>No hay comentarios para este producto.</p>
+          )}
+        </Box>
+      </Modal>
       <Modal open={openAddProductModal} onClose={() => setOpenAddProductModal(false)}>
         <Box
           sx={{
@@ -526,13 +492,7 @@ const ProductList = () => {
         </Box>
       </Modal>
 
-<<<<<<< HEAD
       <Modal open={openEditProductModal} onClose={() => setOpenEditProductModal(false)}>
-=======
-      <Modal
-        open={openEditProductModal}
-        onClose={() => setOpenEditProductModal(false)}
-      >
         <Box
           sx={{
             display: "flex",
@@ -543,138 +503,6 @@ const ProductList = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "60%",
-            bgcolor: "rgb(204, 204, 204)",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: "5px",
-          }}
-        >
-          <h1>Editar producto</h1>
-          <Autocomplete
-            options={foundations}
-            getOptionLabel={(option) => option.found_name}
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Fundación" />
-            )}
-            value={
-              foundations.find(
-                (foundation) =>
-                  foundation.found_id === selectedProduct?.found_id
-              ) || null
-            }
-            onChange={(event, value) => setSelectedFoundation(value)}
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Nombre"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Precio Unitario"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-            type="number"
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Stock"
-            value={productStock}
-            onChange={(e) => setProductStock(e.target.value)}
-            type="number"
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Fecha de Vencimiento"
-            value={productDueDate}
-            onChange={(e) => setProductDueDate(e.target.value)}
-            type="date"
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Descripción"
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ marginTop: 2 }}
-            onClick={handleEditProduct}
-          >
-            Actualizar
-          </Button>
-        </Box>
-      </Modal>
-
-      <Modal
-        open={openCommentModal}
-        onClose={() => setOpenCommentModal(false)}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "white",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <h2>Añadir Comentario</h2>
-          <TextField
-            label="Comentario"
-            variant="outlined"
-            sx={{ margin: 1 }}
-            value={commentContent}
-            onChange={(e) => setCommentContent(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleAddComment(selectedProduct)}
-            sx={{ marginTop: 2 }}
-          >
-            Guardar Comentario
-          </Button>
-        </Box>
-      </Modal>
-
-      <Modal
-        open={openCommentListModal}
-        onClose={() => setOpenCommentListModal(false)}
-      >
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-<<<<<<< HEAD
             width: "60%",
             bgcolor: "rgb(204, 204, 204)",
             boxShadow: 24,
@@ -769,28 +597,6 @@ const ProductList = () => {
           >
             Guardar Comentario
           </Button>
-=======
-            bgcolor: "white",
-            boxShadow: 24,
-            p: 4,
-            maxHeight: "80vh",
-            overflowY: "auto",
-          }}
-        >
-          <h2>Comentarios</h2>
-          {comments.length > 0 ? (
-            comments.map((comment, index) => (
-              <Paper key={index} sx={{ padding: 2, margin: 1, width: "100%" }}>
-                <p>
-                  <strong>Usuario ID:</strong> {comment.user_id}
-                </p>
-                <p>{comment.comment_text}</p>
-              </Paper>
-            ))
-          ) : (
-            <p>No hay comentarios para este producto.</p>
-          )}
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
         </Box>
       </Modal>
     </Box>
@@ -798,7 +604,3 @@ const ProductList = () => {
 };
 
 export default ProductList;
-<<<<<<< HEAD
-
-=======
->>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
