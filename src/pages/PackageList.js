@@ -151,15 +151,9 @@ const PackageList = () => {
                             value={packageState}
                             onChange={(e) => setPackageState(e.target.value)}
                         >
-                            <MenuItem value="Verificado" disabled={packageState !== "Verificado"}>
-                                Verificado
-                            </MenuItem>
-                            <MenuItem value="Enviado" disabled={packageState === "Entregado"}>
-                                Enviado
-                            </MenuItem>
-                            <MenuItem value="Entregado" disabled={packageState !== "Enviado"}>
-                                Entregado
-                            </MenuItem>
+                            <MenuItem value="Verificado">Verificado</MenuItem>
+                            <MenuItem value="Enviado">Enviado</MenuItem>
+                            <MenuItem value="Entregado">Entregado</MenuItem>
                         </Select>
                     </FormControl>
                     <Button
