@@ -12,7 +12,6 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -25,6 +24,7 @@ const ProductList = () => {
   const [productDueDate, setProductDueDate] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [openAddProductModal, setOpenAddProductModal] = useState(false);
+  const [openEditProductModal, setOpenEditProductModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
   const [foundations, setFoundations] = useState([]);
   const [selectedFoundation, setSelectedFoundation] = useState(null);
@@ -67,10 +67,14 @@ const ProductList = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (res.ok) {
-        const data = await res.json();
+      if (!res.ok) {
+        console.log("Error en la respuesta del servidor ", res);
+        throw new Error("Error en la respuesta del servidor");
+      }
+
+      const data = await res.json();
+      if (Array.isArray(data)) {
         setFoundations(data);
-        console.log("Fundaciones cargadas:", data);
       } else {
         toast.error("Error al cargar las fundaciones");
       }
@@ -86,6 +90,7 @@ const ProductList = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           found_id: selectedFoundation?.found_id,
@@ -174,13 +179,51 @@ const ProductList = () => {
     }
   };
 
+  const handleEditProduct = async () => {
+    const token = Cookies.get("token");
+    try {
+      const res = await fetch(
+        `http://localhost/api/products/productos/${selectedProduct.product_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            found_id:
+              selectedFoundation?.found_id || selectedProduct.found_id,
+            product_name: productName,
+            product_price: productPrice,
+            product_stock: productStock,
+            product_duedate: productDueDate,
+            product_description: productDescription,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+
+      toast.success("Producto actualizado exitosamente.");
+      setOpenEditProductModal(false);
+      loadProducts();
+    } catch (error) {
+      toast.error("Error al actualizar el producto.");
+    }
+  };
+
   const deleteProduct = async (id) => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch(`http://localhost/api/products/productos/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `http://localhost/api/products/productos/${id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Error en la respuesta del servidor");
@@ -193,9 +236,23 @@ const ProductList = () => {
     }
   };
 
+  const handleOpenEditProductModal = (product) => {
+    setSelectedProduct(product);
+    setProductName(product.product_name);
+    setProductPrice(product.product_price);
+    setProductStock(product.product_stock);
+    setProductDueDate(product.product_duedate);
+    setProductDescription(product.product_description);
+    setSelectedFoundation(
+      foundations.find((foundation) => foundation.found_id === product.found_id) ||
+        null
+    );
+    setOpenEditProductModal(true);
+  };
+
   useEffect(() => {
-    loadFoundations();
     loadProducts();
+    loadFoundations();
   }, []);
 
   return (
@@ -247,6 +304,7 @@ const ProductList = () => {
           <TableHead>
             <TableRow>
               <TableCell>Nombre</TableCell>
+              <TableCell>Fundación</TableCell>
               <TableCell>Precio</TableCell>
               <TableCell>Stock</TableCell>
               <TableCell>Fecha de Vencimiento</TableCell>
@@ -255,47 +313,279 @@ const ProductList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.product_id}>
-                <TableCell>{product.product_name}</TableCell>
-                <TableCell>{product.product_price}</TableCell>
-                <TableCell>{product.product_stock}</TableCell>
-                <TableCell>{product.product_duedate}</TableCell>
-                <TableCell>{product.product_description}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: "red" }}
-                    onClick={() => deleteProduct(product.product_id)}
-                  >
-                    Eliminar
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: "green", marginRight: 1 }}
-                    onClick={() => {
-                      setSelectedProduct(product.product_id);
-                      loadComments(product.product_id);
-                    }}
-                  >
-                    Ver Comentarios
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: "blue" }}
-                    onClick={() => {
-                      setSelectedProduct(product.product_id);
-                      setOpenCommentModal(true);
-                    }}
-                  >
-                    Añadir Comentario
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {products.map((product) => {
+              // Encontrar la fundación asociada al producto
+              const foundation = foundations.find(
+                (f) => f.found_id === product.found_id
+              );
+              return (
+                <TableRow key={product.product_id}>
+                  <TableCell>{product.product_name}</TableCell>
+                  <TableCell>
+                    {foundation ? foundation.found_name : "Fundación desconocida"}
+                  </TableCell>
+                  <TableCell>{product.product_price}</TableCell>
+                  <TableCell>{product.product_stock}</TableCell>
+                  <TableCell>{product.product_duedate}</TableCell>
+                  <TableCell>{product.product_description}</TableCell>
+                  <TableCell>
+                    <Box display="flex" gap={1}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() =>
+                          handleOpenEditProductModal(product)
+                        }
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{ bgcolor: "red" }}
+                        onClick={() => deleteProduct(product.product_id)}
+                      >
+                        Eliminar
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{ bgcolor: "green", marginRight: 1 }}
+                        onClick={() => {
+                          setSelectedProduct(product.product_id);
+                          loadComments(product.product_id);
+                        }}
+                      >
+                        Ver Comentarios
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{ bgcolor: "blue" }}
+                        onClick={() => {
+                          setSelectedProduct(product.product_id);
+                          setOpenCommentModal(true);
+                        }}
+                      >
+                        Añadir Comentario
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Modal open={openAddProductModal} onClose={() => setOpenAddProductModal(false)}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "60%",
+            bgcolor: "rgb(204, 204, 204)",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "5px",
+          }}
+        >
+          <h1>Crear nuevo producto</h1>
+          <Autocomplete
+            options={foundations}
+            getOptionLabel={(option) => option.found_name}
+            style={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Fundación" />
+            )}
+            onChange={(event, value) => setSelectedFoundation(value)}
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Nombre"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Precio Unitario"
+            value={productPrice}
+            onChange={(e) => setProductPrice(e.target.value)}
+            type="number"
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Stock"
+            value={productStock}
+            onChange={(e) => setProductStock(e.target.value)}
+            type="number"
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Fecha de Vencimiento"
+            value={productDueDate}
+            onChange={(e) => setProductDueDate(e.target.value)}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Descripción"
+            value={productDescription}
+            onChange={(e) => setProductDescription(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            sx={{ margin: ".5rem .5rem" }}
+            onClick={handleAddProduct}
+          >
+            Crear
+          </Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openEditProductModal}
+        onClose={() => setOpenEditProductModal(false)}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "60%",
+            bgcolor: "rgb(204, 204, 204)",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "5px",
+          }}
+        >
+          <h1>Editar producto</h1>
+          <Autocomplete
+            options={foundations}
+            getOptionLabel={(option) => option.found_name}
+            style={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Fundación" />
+            )}
+            value={
+              foundations.find(
+                (foundation) =>
+                  foundation.found_id === selectedProduct?.found_id
+              ) || null
+            }
+            onChange={(event, value) => setSelectedFoundation(value)}
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Nombre"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Precio Unitario"
+            value={productPrice}
+            onChange={(e) => setProductPrice(e.target.value)}
+            type="number"
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Stock"
+            value={productStock}
+            onChange={(e) => setProductStock(e.target.value)}
+            type="number"
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Fecha de Vencimiento"
+            value={productDueDate}
+            onChange={(e) => setProductDueDate(e.target.value)}
+            type="date"
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Descripción"
+            value={productDescription}
+            onChange={(e) => setProductDescription(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ marginTop: 2 }}
+            onClick={handleEditProduct}
+          >
+            Actualizar
+          </Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openCommentModal}
+        onClose={() => setOpenCommentModal(false)}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <h2>Añadir Comentario</h2>
+          <TextField
+            label="Comentario"
+            variant="outlined"
+            sx={{ margin: 1 }}
+            value={commentContent}
+            onChange={(e) => setCommentContent(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleAddComment(selectedProduct)}
+            sx={{ marginTop: 2 }}
+          >
+            Guardar Comentario
+          </Button>
+        </Box>
+      </Modal>
 
       <Modal
         open={openCommentListModal}
@@ -331,115 +621,6 @@ const ProductList = () => {
           ) : (
             <p>No hay comentarios para este producto.</p>
           )}
-        </Box>
-      </Modal>
-
-      <Modal
-        open={openAddProductModal}
-        onClose={() => setOpenAddProductModal(false)}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "white",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <h2>Agregar Producto</h2>
-          <Autocomplete
-            options={foundations}
-            getOptionLabel={(option) => option.found_name}
-            sx={{ width: 300, margin: 1 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Fundación" variant="outlined" />
-            )}
-            onChange={(event, value) => setSelectedFoundation(value)}
-          />
-          <TextField
-            label="Nombre"
-            variant="outlined"
-            sx={{ margin: 1 }}
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-          />
-          <TextField
-            label="Precio"
-            variant="outlined"
-            sx={{ margin: 1 }}
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-          />
-          <TextField
-            label="Stock"
-            variant="outlined"
-            sx={{ margin: 1 }}
-            value={productStock}
-            onChange={(e) => setProductStock(e.target.value)}
-          />
-          <TextField
-            label="Fecha de Vencimiento"
-            variant="outlined"
-            sx={{ margin: 1 }}
-            value={productDueDate}
-            onChange={(e) => setProductDueDate(e.target.value)}
-          />
-          <TextField
-            label="Descripción"
-            variant="outlined"
-            sx={{ margin: 1 }}
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddProduct}
-            sx={{ marginTop: 2 }}
-          >
-            Guardar Producto
-          </Button>
-        </Box>
-      </Modal>
-      <Modal open={openCommentModal} onClose={() => setOpenCommentModal(false)}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "white",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <h2>Añadir Comentario</h2>
-          <TextField
-            label="Comentario"
-            variant="outlined"
-            sx={{ margin: 1 }}
-            value={commentContent}
-            onChange={(e) => setCommentContent(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleAddComment(selectedProduct)}
-            sx={{ marginTop: 2 }}
-          >
-            Guardar Comentario
-          </Button>
         </Box>
       </Modal>
     </Box>
