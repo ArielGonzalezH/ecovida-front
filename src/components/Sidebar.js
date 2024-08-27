@@ -52,17 +52,17 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
           </li>
         )}
         {role_id == 1 && (
-        <li>
-          <NavLink
-            to="/foundations-list"
-            className="text-dark rounded py-2 w-100 d-inline-block px-3"
-            exact
-            activeClassName="active"
-          >
-            <FaIcons.FaHome className="icon" />{" "}
-            <span className="text">Fundaciones</span>
-          </NavLink>
-        </li> )}
+          <li>
+            <NavLink
+              to="/foundations-list"
+              className="text-dark rounded py-2 w-100 d-inline-block px-3"
+              exact
+              activeClassName="active"
+            >
+              <FaIcons.FaHome className="icon" />{" "}
+              <span className="text">Fundaciones</span>
+            </NavLink>
+          </li>)}
         {role_id == 2 && (
           <li>
             <NavLink
@@ -88,7 +88,7 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
               <span className="text">Carrito de Compras</span>
             </NavLink>
           </li>
-          
+
         )}
         {role_id == 3 && (
           <li>
@@ -102,7 +102,19 @@ const Sidebar = ({ toggleSidebar, isVisible }) => {
               <span className="text">Fundaciones cliente</span>
             </NavLink>
           </li>
-          
+        )}
+        {role_id == 4 && (
+          <li>
+            <NavLink
+              to="/products-states"
+              className="text-dark rounded py-2 w-100 d-inline-block px-3"
+              exact
+              activeClassName="active"
+            >
+              <FaIcons.FaClipboardList className="icon" />{" "}
+              <span className="text">Control de Estados</span>
+            </NavLink>
+          </li>
         )}
         {role_id == 1 && (
           <li>
