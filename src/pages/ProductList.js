@@ -16,11 +16,9 @@ import {
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-<<<<<<< HEAD
-=======
 import soapRequest from "easy-soap-request";
 import axios from "axios";
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
+
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -30,14 +28,7 @@ const ProductList = () => {
   const [productDueDate, setProductDueDate] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [openAddProductModal, setOpenAddProductModal] = useState(false);
-<<<<<<< HEAD
-  const [foundations, setFoundations] = useState([]);
-  const [selectedFoundation, setSelectedFoundation] = useState(null);
   const [openEditProductModal, setOpenEditProductModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-
-
-=======
   const [openCommentModal, setOpenCommentModal] = useState(false);
   const [foundations, setFoundations] = useState([]);
   const [selectedFoundation, setSelectedFoundation] = useState(null);
@@ -71,7 +62,6 @@ const ProductList = () => {
       toast.error("Error al cargar los comentarios");
     }
   };
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
 
   const loadFoundations = async () => {
     const token = Cookies.get("token");
@@ -81,22 +71,10 @@ const ProductList = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-<<<<<<< HEAD
-      if (!res.ok) {
-        console.log("Error en la respuesta del servidor ", res);
-        throw new Error("Error en la respuesta del servidor");
-      }
-
-      const data = await res.json();
-      console.log(data);
-      if (Array.isArray(data)) {
-        setFoundations(data);
-=======
       if (res.ok) {
         const data = await res.json();
         setFoundations(data);
         console.log("Fundaciones cargadas:", data);
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
       } else {
         toast.error("Error al cargar las fundaciones");
       }
@@ -105,10 +83,7 @@ const ProductList = () => {
     }
   };
 
-<<<<<<< HEAD
 
-=======
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
   const handleAddProduct = async () => {
     const token = Cookies.get("token");
     try {
@@ -139,8 +114,7 @@ const ProductList = () => {
     }
   };
 
-<<<<<<< HEAD
-=======
+
   const handleAddComment = async (product_id) => {
     const token = Cookies.get("token");
     const userCookie = Cookies.get("user");
@@ -181,11 +155,12 @@ const ProductList = () => {
     }
   };
 
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
   const loadProducts = async () => {
     const token = Cookies.get("token");
+    const userId = JSON.parse(Cookies.get("user")).user_id;
+
     try {
-      const res = await fetch("http://localhost/api/products/productos", {
+      const res = await fetch(`http://localhost/api/products/user_foundation_product/${userId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -197,17 +172,22 @@ const ProductList = () => {
 
       const data = await res.json();
 
-      if (Array.isArray(data)) {
-        setProducts(data);
-      } else {
-        toast.error("Error al cargar los productos");
-      }
+      // Procesar el JSON para extraer las fundaciones y sus productos
+      const productsWithFoundation = data.foundations.flatMap((foundation) =>
+        foundation.products.map((product) => ({
+          ...product,
+          foundationName: foundation.foundation.found_name, // Agregar el nombre de la fundación al producto
+        }))
+      );
+
+      setProducts(productsWithFoundation);
+      console.log("Productos cargados:", productsWithFoundation);
     } catch (error) {
       console.error(error);
+      toast.error("Error al cargar los productos");
     }
   };
 
-<<<<<<< HEAD
   const handleEditProduct = async () => {
     const token = Cookies.get("token");
     try {
@@ -238,8 +218,6 @@ const ProductList = () => {
     }
   };
 
-=======
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
   const deleteProduct = async (id) => {
     const token = Cookies.get("token");
     try {
@@ -259,28 +237,23 @@ const ProductList = () => {
     }
   };
 
-<<<<<<< HEAD
   const handleOpenEditProductModal = (product) => {
     setSelectedProduct(product);
     setProductName(product.product_name);
     setProductPrice(product.product_price);
     setProductStock(product.product_stock);
-    setProductDueDate(product.product_duedate);
+    setProductDueDate(new Date(product.product_duedate).toISOString().split('T')[0]);
     setProductDescription(product.product_description);
-    setSelectedFoundation(
-      foundations.find((foundation) => foundation.found_id === product.found_id) || null
-    );
+  
+    const associatedFoundation = foundations.find((foundation) => foundation.found_id === product.found_id);
+    setSelectedFoundation(associatedFoundation || null);
+  
     setOpenEditProductModal(true);
   };
 
   useEffect(() => {
     loadProducts();
     loadFoundations();
-=======
-  useEffect(() => {
-    loadFoundations();
-    loadProducts();
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
   }, []);
 
   return (
@@ -308,7 +281,6 @@ const ProductList = () => {
           color="primary"
           sx={{ margin: 1 }}
           onClick={() => setOpenAddProductModal(true)}
-<<<<<<< HEAD
         >
           Crear nuevo producto
         </Button>
@@ -342,39 +314,37 @@ const ProductList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => {
-              // Encontrar la fundación asociada al producto
-              const foundation = foundations.find(f => f.found_id === product.found_id);
-              return (
-                <TableRow key={product.product_id}>
-                  <TableCell>{product.product_name}</TableCell>
-                  <TableCell>{foundation ? foundation.found_name : "Fundación desconocida"}</TableCell>
-                  <TableCell>{product.product_price}</TableCell>
-                  <TableCell>{product.product_stock}</TableCell>
-                  <TableCell>{product.product_duedate}</TableCell>
-                  <TableCell>{product.product_description}</TableCell>
-                  <TableCell>
-                    <Box display="fles" gap={1}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleOpenEditProductModal(product)}
-                      >
-                        Editar
-                      </Button>
-                      <Button
-                        variant="contained"
-                        sx={{ bgcolor: "red" }}
-                        onClick={() => deleteProduct(product.product_id)}
-                      >
-                        Eliminar
-                      </Button>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {products.map((product) => (
+              <TableRow key={product.product_id}>
+                <TableCell>{product.product_name}</TableCell>
+                <TableCell>{product.foundationName}</TableCell> {/* Mostrar el nombre de la fundación */}
+                <TableCell>{product.product_price}</TableCell>
+                <TableCell>{product.product_stock}</TableCell>
+                <TableCell>{new Date(product.product_duedate).toLocaleDateString()}</TableCell>
+                <TableCell>{product.product_description}</TableCell>
+                <TableCell>
+                  <Box display="flex" gap={1}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleOpenEditProductModal(product)}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{ bgcolor: "red" }}
+                      onClick={() => deleteProduct(product.product_id)}
+                    >
+                      Eliminar
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
+
+
         </Table>
       </TableContainer>
       <Modal open={openAddProductModal} onClose={() => setOpenAddProductModal(false)}>
@@ -458,85 +428,6 @@ const ProductList = () => {
       </Modal>
 
       <Modal open={openEditProductModal} onClose={() => setOpenEditProductModal(false)}>
-=======
-        >
-          Crear nuevo producto
-        </Button>
-        <TextField
-          id="outlined-basic"
-          label="Buscar producto"
-          variant="outlined"
-          sx={{ margin: 1 }}
-        />
-      </Box>
-      <TableContainer
-        component={Paper}
-        sx={{
-          width: "80%",
-          maxHeight: 300,
-          overflowX: "scroll",
-          overflowY: "scroll",
-          marginTop: "1rem",
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Precio</TableCell>
-              <TableCell>Stock</TableCell>
-              <TableCell>Fecha de Vencimiento</TableCell>
-              <TableCell>Descripción</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.product_id}>
-                <TableCell>{product.product_name}</TableCell>
-                <TableCell>{product.product_price}</TableCell>
-                <TableCell>{product.product_stock}</TableCell>
-                <TableCell>{product.product_duedate}</TableCell>
-                <TableCell>{product.product_description}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: "red" }}
-                    onClick={() => deleteProduct(product.product_id)}
-                  >
-                    Eliminar
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: "green", marginRight: 1 }}
-                    onClick={() => {
-                      setSelectedProduct(product.product_id);
-                      loadComments(product.product_id);
-                    }}
-                  >
-                    Ver Comentarios
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: "blue" }}
-                    onClick={() => {
-                      setSelectedProduct(product.product_id);
-                      setOpenCommentModal(true);
-                    }}
-                  >
-                    Añadir Comentario
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Modal
-        open={openCommentListModal}
-        onClose={() => setOpenCommentListModal(false)}
-      >
         <Box
           sx={{
             display: "flex",
@@ -547,45 +438,6 @@ const ProductList = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            bgcolor: "white",
-            boxShadow: 24,
-            p: 4,
-            maxHeight: "80vh",
-            overflowY: "auto",
-          }}
-        >
-          <h2>Comentarios</h2>
-          {comments.length > 0 ? (
-            comments.map((comment, index) => (
-              <Paper key={index} sx={{ padding: 2, margin: 1, width: "100%" }}>
-                <p>
-                  <strong>Usuario ID:</strong> {comment.user_id}
-                </p>
-                <p>{comment.comment_text}</p>
-              </Paper>
-            ))
-          ) : (
-            <p>No hay comentarios para este producto.</p>
-          )}
-        </Box>
-      </Modal>
-
-      <Modal
-        open={openAddProductModal}
-        onClose={() => setOpenAddProductModal(false)}
-      >
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-<<<<<<< HEAD
             width: "60%",
             bgcolor: "rgb(204, 204, 204)",
             boxShadow: 24,
@@ -607,68 +459,10 @@ const ProductList = () => {
             sx={{ margin: ".5rem .5rem", width: "80%" }}
             id="outlined-required"
             label="Nombre"
-=======
-            bgcolor: "white",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <h2>Agregar Producto</h2>
-          <Autocomplete
-            options={foundations}
-            getOptionLabel={(option) => option.found_name}
-            sx={{ width: 300, margin: 1 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Fundación" variant="outlined" />
-            )}
-            onChange={(event, value) => setSelectedFoundation(value)}
-          />
-          <TextField
-            label="Nombre"
-            variant="outlined"
-            sx={{ margin: 1 }}
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
           />
           <TextField
-<<<<<<< HEAD
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Precio Unitario"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-            type="number"
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Stock"
-            value={productStock}
-            onChange={(e) => setProductStock(e.target.value)}
-            type="number"
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Fecha de Vencimiento"
-            value={productDueDate}
-            onChange={(e) => setProductDueDate(e.target.value)}
-            type="date"
-          />
-          <TextField
-            required
-            sx={{ margin: ".5rem .5rem", width: "80%" }}
-            id="outlined-required"
-            label="Descripción"
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-            multiline
-            rows={4}
-=======
             label="Precio"
             variant="outlined"
             sx={{ margin: 1 }}
@@ -695,18 +489,11 @@ const ProductList = () => {
             sx={{ margin: 1 }}
             value={productDescription}
             onChange={(e) => setProductDescription(e.target.value)}
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
           />
           <Button
             variant="contained"
             color="primary"
-<<<<<<< HEAD
-            sx={{ marginTop: 2 }}
             onClick={handleEditProduct}
-          >
-            Actualizar
-=======
-            onClick={handleAddProduct}
             sx={{ marginTop: 2 }}
           >
             Guardar Producto
@@ -744,7 +531,6 @@ const ProductList = () => {
             sx={{ marginTop: 2 }}
           >
             Guardar Comentario
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
           </Button>
         </Box>
       </Modal>
@@ -753,8 +539,4 @@ const ProductList = () => {
 };
 
 export default ProductList;
-<<<<<<< HEAD
 
-
-=======
->>>>>>> e23e84a7acbfc89a519c935e48825dd6bbe4f7de
