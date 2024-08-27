@@ -16,8 +16,6 @@ import {
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import soapRequest from "easy-soap-request";
-import axios from "axios";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
