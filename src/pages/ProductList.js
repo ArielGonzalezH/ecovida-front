@@ -15,6 +15,12 @@ import {
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
+import soapRequest from "easy-soap-request";
+import axios from "axios";
+
+=======
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -67,6 +73,12 @@ const ProductList = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+<<<<<<< HEAD
+      if (res.ok) {
+        const data = await res.json();
+        setFoundations(data);
+        console.log("Fundaciones cargadas:", data);
+=======
       if (!res.ok) {
         console.log("Error en la respuesta del servidor ", res);
         throw new Error("Error en la respuesta del servidor");
@@ -75,6 +87,7 @@ const ProductList = () => {
       const data = await res.json();
       if (Array.isArray(data)) {
         setFoundations(data);
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
       } else {
         toast.error("Error al cargar las fundaciones");
       }
@@ -83,6 +96,10 @@ const ProductList = () => {
     }
   };
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
   const handleAddProduct = async () => {
     const token = Cookies.get("token");
     try {
@@ -114,6 +131,10 @@ const ProductList = () => {
     }
   };
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
   const handleAddComment = async (product_id) => {
     const token = Cookies.get("token");
     const userCookie = Cookies.get("user");
@@ -156,8 +177,10 @@ const ProductList = () => {
 
   const loadProducts = async () => {
     const token = Cookies.get("token");
+    const userId = JSON.parse(Cookies.get("user")).user_id;
+
     try {
-      const res = await fetch("http://localhost/api/products/productos", {
+      const res = await fetch(`http://localhost/api/products/user_foundation_product/${userId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -169,13 +192,19 @@ const ProductList = () => {
 
       const data = await res.json();
 
-      if (Array.isArray(data)) {
-        setProducts(data);
-      } else {
-        toast.error("Error al cargar los productos");
-      }
+      // Procesar el JSON para extraer las fundaciones y sus productos
+      const productsWithFoundation = data.foundations.flatMap((foundation) =>
+        foundation.products.map((product) => ({
+          ...product,
+          foundationName: foundation.foundation.found_name, // Agregar el nombre de la fundación al producto
+        }))
+      );
+
+      setProducts(productsWithFoundation);
+      console.log("Productos cargados:", productsWithFoundation);
     } catch (error) {
       console.error(error);
+      toast.error("Error al cargar los productos");
     }
   };
 
@@ -241,12 +270,19 @@ const ProductList = () => {
     setProductName(product.product_name);
     setProductPrice(product.product_price);
     setProductStock(product.product_stock);
-    setProductDueDate(product.product_duedate);
+    setProductDueDate(new Date(product.product_duedate).toISOString().split('T')[0]);
     setProductDescription(product.product_description);
+<<<<<<< HEAD
+  
+    const associatedFoundation = foundations.find((foundation) => foundation.found_id === product.found_id);
+    setSelectedFoundation(associatedFoundation || null);
+  
+=======
     setSelectedFoundation(
       foundations.find((foundation) => foundation.found_id === product.found_id) ||
         null
     );
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
     setOpenEditProductModal(true);
   };
 
@@ -313,6 +349,36 @@ const ProductList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
+<<<<<<< HEAD
+            {products.map((product) => (
+              <TableRow key={product.product_id}>
+                <TableCell>{product.product_name}</TableCell>
+                <TableCell>{product.foundationName}</TableCell> {/* Mostrar el nombre de la fundación */}
+                <TableCell>{product.product_price}</TableCell>
+                <TableCell>{product.product_stock}</TableCell>
+                <TableCell>{new Date(product.product_duedate).toLocaleDateString()}</TableCell>
+                <TableCell>{product.product_description}</TableCell>
+                <TableCell>
+                  <Box display="flex" gap={1}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleOpenEditProductModal(product)}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{ bgcolor: "red" }}
+                      onClick={() => deleteProduct(product.product_id)}
+                    >
+                      Eliminar
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+=======
             {products.map((product) => {
               // Encontrar la fundación asociada al producto
               const foundation = foundations.find(
@@ -371,7 +437,10 @@ const ProductList = () => {
                 </TableRow>
               );
             })}
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
           </TableBody>
+
+
         </Table>
       </TableContainer>
 
@@ -457,6 +526,9 @@ const ProductList = () => {
         </Box>
       </Modal>
 
+<<<<<<< HEAD
+      <Modal open={openEditProductModal} onClose={() => setOpenEditProductModal(false)}>
+=======
       <Modal
         open={openEditProductModal}
         onClose={() => setOpenEditProductModal(false)}
@@ -591,6 +663,7 @@ const ProductList = () => {
         open={openCommentListModal}
         onClose={() => setOpenCommentListModal(false)}
       >
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
         <Box
           sx={{
             display: "flex",
@@ -601,6 +674,102 @@ const ProductList = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
+<<<<<<< HEAD
+            width: "60%",
+            bgcolor: "rgb(204, 204, 204)",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "5px",
+          }}
+        >
+          <h1>Editar producto</h1>
+          <Autocomplete
+            options={foundations}
+            getOptionLabel={(option) => option.found_name}
+            style={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Fundación" />}
+            value={foundations.find((foundation) => foundation.found_id === selectedProduct?.found_id) || null}
+            onChange={(event, value) => setSelectedFoundation(value)}
+          />
+          <TextField
+            required
+            sx={{ margin: ".5rem .5rem", width: "80%" }}
+            id="outlined-required"
+            label="Nombre"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+          />
+          <TextField
+            label="Precio"
+            variant="outlined"
+            sx={{ margin: 1 }}
+            value={productPrice}
+            onChange={(e) => setProductPrice(e.target.value)}
+          />
+          <TextField
+            label="Stock"
+            variant="outlined"
+            sx={{ margin: 1 }}
+            value={productStock}
+            onChange={(e) => setProductStock(e.target.value)}
+          />
+          <TextField
+            label="Fecha de Vencimiento"
+            variant="outlined"
+            sx={{ margin: 1 }}
+            value={productDueDate}
+            onChange={(e) => setProductDueDate(e.target.value)}
+          />
+          <TextField
+            label="Descripción"
+            variant="outlined"
+            sx={{ margin: 1 }}
+            value={productDescription}
+            onChange={(e) => setProductDescription(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleEditProduct}
+            sx={{ marginTop: 2 }}
+          >
+            Guardar Producto
+          </Button>
+        </Box>
+      </Modal>
+      <Modal open={openCommentModal} onClose={() => setOpenCommentModal(false)}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <h2>Añadir Comentario</h2>
+          <TextField
+            label="Comentario"
+            variant="outlined"
+            sx={{ margin: 1 }}
+            value={commentContent}
+            onChange={(e) => setCommentContent(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleAddComment(selectedProduct)}
+            sx={{ marginTop: 2 }}
+          >
+            Guardar Comentario
+          </Button>
+=======
             bgcolor: "white",
             boxShadow: 24,
             p: 4,
@@ -621,6 +790,7 @@ const ProductList = () => {
           ) : (
             <p>No hay comentarios para este producto.</p>
           )}
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
         </Box>
       </Modal>
     </Box>
@@ -628,3 +798,7 @@ const ProductList = () => {
 };
 
 export default ProductList;
+<<<<<<< HEAD
+
+=======
+>>>>>>> a3f01d3fd7a8b2d73f6d64ee55038b92e17e96e7
