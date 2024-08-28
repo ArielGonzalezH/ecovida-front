@@ -14,6 +14,7 @@ import {
   import Cookies from "js-cookie";
   import { useEffect, useState } from "react";
   import { toast } from "react-toastify";
+  import config from "../config";
   
   const VentasTotales = () => {
     const [ventas, setVentas] = useState([]);
@@ -21,7 +22,7 @@ import {
     const loadVentas = async () => {
       const token = Cookies.get("token");
       try {
-        const res = await fetch("http://localhost/api/sales/ventas", {
+        const res = await fetch(`${config.apiBaseUrl}/api/sales/ventas`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });

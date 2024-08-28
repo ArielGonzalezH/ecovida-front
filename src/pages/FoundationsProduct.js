@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useCart } from "./cartContext";
+import config from "../config";
 
 const FoundationsProduct = () => {
   const [products, setProducts] = useState([]);
@@ -29,7 +30,7 @@ const FoundationsProduct = () => {
   const loadProducts = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch(`http://localhost/api/products/productos/foundation/${found_id}`, {
+      const res = await fetch(`${config.apiBaseUrl}/api/products/productos/foundation/${found_id}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -61,7 +62,7 @@ const FoundationsProduct = () => {
   const loadFoundation = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch(`http://localhost/api/foundations/${found_id}`, {
+      const res = await fetch(`${config.apiBaseUrl}/api/foundations/${found_id}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });

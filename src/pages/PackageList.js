@@ -17,6 +17,7 @@ import {
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import config from "../config";
 
 const PackageList = () => {
     const [packages, setPackages] = useState([]);
@@ -27,7 +28,7 @@ const PackageList = () => {
     const loadPackages = async () => {
         const token = Cookies.get("token");
         try {
-            const response = await fetch("http://localhost/api/packages/package", {
+            const response = await fetch(`${config.apiBaseUrl}/api/packages/package`, {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -42,7 +43,7 @@ const PackageList = () => {
     const handleUpdatePackage = async () => {
         const token = Cookies.get("token");
         try {
-            const response = await fetch(`http://localhost/api/packages/package/${selectedPackage.package_id}`, {
+            const response = await fetch(`${config.apiBaseUrl}/api/packages/package/${selectedPackage.package_id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +63,7 @@ const PackageList = () => {
     const deletePackage = async (id) => {
         const token = Cookies.get("token");
         try {
-            const response = await fetch(`http://localhost/api/packages/package/${id}`, {
+            const response = await fetch(`${config.apiBaseUrl}/api/packages/package/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import {jwtDecode} from 'jwt-decode';
 import { Button, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, ListItemText } from "@mui/material";
+import config from "../config";
 
 // Función para obtener el user_id desde el token
 const getUserIDFromToken = (token) => {
@@ -27,7 +28,7 @@ function OrderHistoryPage() {
     if (user_id) {
       const fetchOrders = async () => {
         try {
-          const response = await axios.get(`http://localhost/api/sale_headers/sale_headers/${user_id}`);
+          const response = await axios.get(`${config.apiBaseUrl}/api/sale_headers/sale_headers/${user_id}`);
           const data = response.data;
 
           console.log("Datos recibidos de la API:", data);
@@ -66,7 +67,7 @@ function OrderHistoryPage() {
   const handleShowDetails = async (sh_id) => {
     setSelectedOrderId(sh_id);
     try {
-      const response = await axios.get(`http://localhost/api/sale_items/sale_items/${sh_id}`);
+      const response = await axios.get(`${config.apiBaseUrl}/api/sale_items/sale_items/${sh_id}`);
       console.log("Detalles del pedido:", response.data);
       setOrderDetails(response.data);
       setDetailsOpen(true);

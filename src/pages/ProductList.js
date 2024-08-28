@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import soapRequest from "easy-soap-request";
 import axios from "axios";
+import config from "../config";
 
 
 const ProductList = () => {
@@ -41,7 +42,7 @@ const ProductList = () => {
     const token = Cookies.get("token");
     try {
       const res = await fetch(
-        `http://localhost/api/comments/comentarios/${product_product_id}`,
+        `${config.apiBaseUrl}/api/comments/comentarios/${product_product_id}`,
         {
           method: "GET",
           headers: {
@@ -66,7 +67,7 @@ const ProductList = () => {
   const loadFoundations = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/foundations/foundations", {
+      const res = await fetch(`${config.apiBaseUrl}/api/foundations/foundations`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -86,7 +87,7 @@ const ProductList = () => {
   const handleAddProduct = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/products/productos", {
+      const res = await fetch(`${config.apiBaseUrl}/api/products/productos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +128,7 @@ const ProductList = () => {
       const userData = JSON.parse(decodeURIComponent(userCookie));
       const user_id = userData.user_id;
 
-      const res = await fetch("http://localhost/api/comments/comentarios", {
+      const res = await fetch(`${config.apiBaseUrl}/api/comments/comentarios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,7 +160,7 @@ const ProductList = () => {
     const userId = JSON.parse(Cookies.get("user")).user_id;
 
     try {
-      const res = await fetch(`http://localhost/api/products/user_foundation_product/${userId}`, {
+      const res = await fetch(`${config.apiBaseUrl}/api/products/user_foundation_product/${userId}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -191,7 +192,7 @@ const ProductList = () => {
     const token = Cookies.get("token");
     try {
       const res = await fetch(
-        `http://localhost/api/products/productos/${selectedProduct.product_product_id}`,
+        `${config.apiBaseUrl}/api/products/productos/${selectedProduct.product_product_id}`,
         {
           method: "PUT",
           headers: {
@@ -226,7 +227,7 @@ const ProductList = () => {
     const token = Cookies.get("token");
     try {
       const res = await fetch(
-        `http://localhost/api/products/productos/${id}`,
+        `${config.apiBaseUrl}/api/products/productos/${id}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

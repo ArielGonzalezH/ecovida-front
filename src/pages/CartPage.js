@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 import {jwtDecode} from 'jwt-decode';
 import {useState} from "react";
+import config from '../config';
 
 const CartPage = () => {
   const [openAddCreditCardModal, setOpenCreditCardModal] = useState(false);
@@ -88,7 +89,7 @@ const CartPage = () => {
 
     try {
         // Enviar el encabezado de la venta
-        const responseHeader = await fetch('http://localhost/api/sale_headers/sale_header', {
+        const responseHeader = await fetch(`${config.apiBaseUrl}/api/sale_headers/sale_header`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ const CartPage = () => {
             // Enviar los detalles de la venta uno por uno y recolectar los resultados
             const detailCreationResults = await Promise.all(cart.map(async (item) => {
                 // Obtener el ID del encabezado de la venta
-                const responseHeaderId = await fetch(`http://localhost/api/sale_headers/sale_header/${user_id}/user`, {
+                const responseHeaderId = await fetch(`${config.apiBaseUrl}/api/sale_headers/sale_header/${user_id}/user`, {
                     method: "GET",
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -121,7 +122,7 @@ const CartPage = () => {
                     };
 
                     try {
-                        const responseDetail = await fetch('http://localhost/api/sale_items/sale_item', {
+                        const responseDetail = await fetch(`${config.apiBaseUrl}/api/sale_items/sale_item`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -153,7 +154,7 @@ const CartPage = () => {
                 // Actualizar el stock de los productos uno por uno
                 const updateStockPromises = cart.map((item) => {
                     const newStock = item.product_stock - item.quantity;
-                    return fetch(`http://localhost/api/products/productos/${item.product_id}`, {
+                    return fetch(`${config.apiBaseUrl}/api/products/productos/${item.product_id}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -177,7 +178,7 @@ const CartPage = () => {
                     };
 
                     try {
-                        const responsePackage = await fetch('http://localhost/api/packages/package', {
+                        const responsePackage = await fetch(`${config.apiBaseUrl}/api/packages/package`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

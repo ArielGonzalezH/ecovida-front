@@ -54,7 +54,7 @@ function App() {
 
     try {
       console.log("Verificando autenticación...");
-      const response = await fetch(`http://localhost/api/users/is-verify`, {
+      const response = await fetch(`${config.apiBaseUrl}/api/users/is-verify`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });

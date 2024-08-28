@@ -5,6 +5,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { toast } from "react-toastify";
 import logo from '../assets/images.png';
 import Cookies from 'js-cookie'
+import config from "../config";
 
 const Login = ({ setAuth }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +30,7 @@ const Login = ({ setAuth }) => {
     try {
       const body = { user_email, user_password };
 
-      const response = await fetch(`http://localhost/api/users/usuarios/login`, {
+      const response = await fetch(`${config.apiBaseUrl}/api/users/usuarios/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)

@@ -2,6 +2,7 @@ import { Box, Card, CardContent, Typography, Grid, TextField, Modal, List, ListI
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Cambia useHistory por useNavigate
+import config from "../config";
 
 const FoundationsClient = () => {
   const [foundations, setFoundations] = useState([]);
@@ -11,7 +12,7 @@ const FoundationsClient = () => {
   const loadFoundations = async () => {
     const token = Cookies.get("token");
     const response = await fetch(
-      "http://localhost/api/foundations/foundations",
+      `${config.apiBaseUrl}/api/foundations/foundations`,
       {
         method: "GET",
         headers: {

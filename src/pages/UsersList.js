@@ -15,6 +15,7 @@ import {
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import config from "../config";
 
 const UsersList = () => {
   const [users, setUsers] = useState([]);
@@ -33,7 +34,7 @@ const UsersList = () => {
   const handleAddUser = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/users/usuarios", {
+      const res = await fetch(`${config.apiBaseUrl}/api/users/usuarios`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +66,7 @@ const UsersList = () => {
     const token = Cookies.get("token");
     try {
       const res = await fetch(
-        `http://localhost/api/users/usuarios/${selectedUser.user_id}`,
+        `${config.apiBaseUrl}/api/users/usuarios/${selectedUser.user_id}`,
         {
           method: "PUT",
           headers: {
@@ -125,7 +126,7 @@ const UsersList = () => {
   const loadUsers = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/users/usuarios", {
+      const res = await fetch(`${config.apiBaseUrl}/api/users/usuarios`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -158,7 +159,7 @@ const UsersList = () => {
   const loadRoles = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/roles/roles", {
+      const res = await fetch(`${config.apiBaseUrl}/api/roles/roles`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -183,7 +184,7 @@ const UsersList = () => {
   const deleteUser = async (id) => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch(`http://localhost/api/users/usuarios/${id}`, {
+      const res = await fetch(`${config.apiBaseUrl}/api/users/usuarios/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import config from "../config";
 
 const Foundations = () => {
   const [openAddFoundationModal, setOpenAddFoundationModal] = useState(false);
@@ -39,7 +40,7 @@ const Foundations = () => {
   const loadRoles = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/roles/roles", {
+      const res = await fetch(`${config.apiBaseUrl}/api/roles/roles`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -63,7 +64,7 @@ const Foundations = () => {
   const loadUsers = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch(`http://localhost/api/users/usuarios`, {
+      const res = await fetch(`${config.apiBaseUrl}/api/users/usuarios`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -93,7 +94,7 @@ const Foundations = () => {
   const loadFoundations = async () => {
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/foundations/foundations", {
+      const res = await fetch(`${config.apiBaseUrl}/api/foundations/foundations`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -127,7 +128,7 @@ const Foundations = () => {
 
     const token = Cookies.get("token");
     try {
-      const res = await fetch("http://localhost/api/foundations/foundations", {
+      const res = await fetch(`${config.apiBaseUrl}/api/foundations/foundations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +157,7 @@ const Foundations = () => {
     const token = Cookies.get("token");
     try {
       const res = await fetch(
-        `http://localhost/api/foundations/foundations/${found_id}`,
+        `${config.apiBaseUrl}/api/foundations/foundations/${found_id}`,
         {
           method: "DELETE",
           headers: {
@@ -191,7 +192,7 @@ const Foundations = () => {
 
     const token = Cookies.get("token");
     try {
-      const res = await fetch(`http://localhost/api/foundations/foundations/${selectedFoundation.found_id}`, {
+      const res = await fetch(`${config.apiBaseUrl}/api/foundations/foundations/${selectedFoundation.found_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
